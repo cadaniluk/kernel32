@@ -1,0 +1,122 @@
+This file contains all resources I used for gathering information about OSes,
+kernels, drivers, and whatever necessary to write this software. Not that I am
+afraid of any lawsuits or something because I pilfered intellectual property
+(if that is possible in this case at all); I just want to keep track of the
+resources to
+
+- give, in fact, credit to the people who taught me.
+- resolve any misconceptions about kernels etc. when bumping into this project.
+- prevent arguments about the correctness of the software. For instance,
+  someone pretends an `int' can be eight bits wide. A quick look at the C11
+  standard (or draft if, like me, you cannot afford a true copy) contradicts
+  that.
+
+Sources:
+
+NOTE: if a source is not explicitly mentioned in any file of the project
+except this one, it served as a source for general or indirect information
+that was only part of the trail to the final result, the actual code.
+
+(0)
+First off, I want to praise Stack Overflow, the flagship of the Stack Exchange
+network and the #1 website for programming questions on the Internet. It
+helped/helps me with my questions and answered most of them in a satisfactory
+manner and let me gather much experience, be it by asking or answering
+questions myself.
+Stack Overflow was the first (and is, as of March 28, 2016, the only)
+programming website I contributed to significantly. I have currently approx.
+9.4k reputation, which cost me a lot of dedication and concentration. But that
+was definitely worth the effort because I gained a humongous pile of
+experience using the site and my understanding of computers expanded therein
+as well.
+I started contributing to some German programming forums as well, although
+a rarity that I actually posted something. Those forums employ a different
+format of communication, called a thread. It has this name because the
+conversation is composed of many, small messages, not one comprehensive question
+and one comprehensive answer. I noticed that those small messages contain
+prevalently "bad stuff," such as questions due to the asker's impreciseness,
+mocking, and insults, but occasionally even answering. It is absolutely
+inaccessible to future readers and the superflous comments and unconcrete
+questions distract from the actual question's content. Stack Overflow is way
+better in that regard and just better from virtually every perspective. Also,
+English is the lingua franca of computer scientists, programmers, and other
+IT folks, so Stack Overflow is better suited for programming anyway. German
+computer forums suffer from a lack of population anyway.
+Before I write a whole essay, let's wrap this up into one conclusion:
+Stack Overflow is superior. All others are inferior. Stack Overflow
+is not perfect, definitely not, but it is the best out there, I am pretty
+confident it is.
+
+1
+ISO/IEC 9899:2011 (C11 Standard);
+http://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm \
+?csnumber=57853 (3/24/16)
+
+2
+ISO/IEC 9899:201x (C11 Standard Draft N1570);
+http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf (3/24/16)
+
+3
+IBM 5170 Technical Reference Manual;
+http://minuszerodegrees.net/manuals/ \
+IBM_5170_Technical_Reference_1502243_MAR84.pdf (3/24/16)
+
+4
+IBM 5160 Technical Reference Manual;
+http://www.retroarchive.org/dos/docs/ibm5160techref.pdf (3/24/16)
+
+5
+IBM VGA/XGA Technical Reference Manual;
+https://archive.org/download/bitsavers_ibmpccardseferenceManualMay92_1756350/ \
+IBM_VGA_XGA_Technical_Reference_Manual_May92.pdf (3/24/16)
+
+7
+Intel 64 and IA-32 Architectures Software Developer Manuals;
+http://www.intel.com/content/dam/www/public/us/en/documents/manuals/ \
+64-ia-32-architectures-software-developer-manual-325462.pdf (3/24/16)
+
+8
+Intel 64 and IA-32 Architectures Optimization Reference Manual;
+http://www.intel.com/content/dam/www/public/us/en/documents/manuals/ \
+64-ia-32-architectures-optimization-manual.pdf (3/24/16)
+
+9
+Intel 82093AA I/O APIC Datasheet;
+http://download.intel.com/design/chipsets/datashts/29056601.pdf (3/28/16)
+
+10
+Intel 82093AA I/O APIC Datasheet Specification Update;
+http://download.intel.com/design/chipsets/specupdt/29071001.pdf (3/28/16)
+
+11
+Intel Microprocessor and Peripheral Handbook Vol. 1;
+https://archive.org/download/bitsavers_inteldataBrocessorandPeripheral \
+HandbookVol1_114989017/1989_Intel_Microprocessor_and_Peripheral_ \
+Handbook_Vol_1.pdf (3/29/16)
+
+12
+osdev.org;
+http://wiki.osdev.org/Main_Page (3/29/16)
+
+13
+APM Specification Version 1.2;
+http://download.microsoft.com/download/1/6/1/ \
+161ba512-40e2-4cc9-843a-923143f3456c/APMV12.rtf (3/30/16)
+
+14
+Ralph Brown's Interrupt List;
+http://www.ctyme.com/intr/int.htm (3/31/16)
+
+15
+IBM PC AT CMOS Map;
+http://www.bioscentral.com/misc/cmosmap.htm (4/13/16)
+
+16
+IBM 5150 Technical Reference Manual;
+http://ibm-pc.org/manuals/ibm/5150/IBM_5150_Technical_Reference_ \
+6322507_APR84.pdf (5/18/16)
+
+17
+uPD765 FDC Datasheet;
+http://pdf1.alldatasheet.com/datasheet-pdf/view/129527/NEC/UPD765A.html \
+(5/18/16)

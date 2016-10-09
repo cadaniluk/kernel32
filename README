@@ -1,0 +1,93 @@
+Overall Description
+
+This is the `README' file of my custom kernel and bootloader, all merged
+into one project. It aims to be a POSIX-compliant (this may take decades to
+accomplish, though) kernel, which can run at least GNU user space programs.
+Moreover, that should be guaranteed through POSIX compliance.
+Naturally, this project utilizes the GNU toolchain, including GCC, as, make,
+ld, (perhaps) m4, objdump, objcopy, and more I cannot think of right now.
+
+Rules
+
+1 The GNU as directive `.set' and similar directives are avoided. Use the
+  C preprocessor instead. Optionally, yet another preprocessor like GNU m4 can
+  be used.
+2 Setters are called `setxxx'. Getters are called `xxx'.
+3 Header files are divided into sections for the assembler and for the
+  compiler. Code only for the assembler is surrounded by a `#if __ASSEMBLER__
+  == 1 ... #endif' macro pair, code only for the compiler is embraced by a `#if
+  __ASSEMBLER__ != 1 ... #endif' macro pair, and code for both is free of
+  conditional macros of that kind. `__ASSEMBLER__' is a standard predefined
+  macro
+4 All code is C11-compliant. Mainly to support variable definitions within
+  for-loops and use the wonderful `static_assert' feature.
+5 Use macros instead of `enum's to retain compatibility to assembly code.
+  This particular rule might be argued about but I'm prepared for any
+  counter argument.
+6 The number of columns of a source file is limited to 80.
+7 One indentation level amounts to one tab (with preferably eight spaces).
+
+Parts
+
+The whole project is split into two parts: the part responsible for booting
+and the actual kernel. These two parts are to be kept split; do not create
+dependencies between those, only clean interfaces.
+
+The booting part includes the first-stage bootloader and any other booting
+instances prior to the execution of the kernel. All these preliminary parts
+prepare the load of the kernel into memory and its final execution: they
+determine data (memory size, hardware available, etc.), load the corresponding
+next stage (and eventually the kernel), move I/O-mapped memory, program
+controllers, and whatever.
+It is written in assembler because GCC currently does not support real 16-bit
+code; it just emits 32-bit and adds size override prefixes, which gets really
+lengthy, especially in a 512-byte-confined bootloader. 
+
+The kernel is, well, the kernel. A thorough description is given spread across
+all source files (TODO: which is to be summarized to one `/doc' directory
+containing detailed documentation of all parts of the project), so I can omit
+describing it here myself in good conscience and delegate that task to said
+resources.
+
+Directories
+
+These are the directories and the fields they are supposed to cover.
+
+`/':
+The root directory. It contains all other directories and configuration
+files, linker scripts, make files, and other files, which concern the
+the project as a whole.
+
+`/include':
+Header files for interaction with drivers and other interfaces
+necessary for writing kernel code like synchronization primitives, debugging
+utility, and numerous other things. 
+Many (if not all) header files described in here have a corresponding
+implementation, so, for example, the driver interfaces in `/include/drivers'
+have their implementations in `/drivers'. Remember that when looking for
+certain files. 
+
+`/include/drivers':
+Header files for drivers. 
+
+`/include/drivers/pci':
+Drivers for devices intended for attachment to the PCI (Peripheral Component
+Interconnect) bus. The bus is the current standard for normal PCs with some
+optional extensions like PCI Express.     
+
+`/include/drivers/isa':
+Drivers for devices intended for attachment to the (legacy) ISA (Industry
+Standard Architecture) bus. The devices originate back from the IBM PC, PC XT, 
+and PC AT days.
+
+`/drivers':
+Implementations of drivers for all the devices and the like the
+kernel needs to interact with. "and the like" implies that, strictly speaking,
+not only devices are kept in there: an APM driver, an ACPI driver, etc. are also
+supposed to be rooted in that directory.
+
+`/tools':
+Name shamelessly copied from the Linux kernel (I don't think the GPL (current
+Linux license) disallows it, so, no copyright, no guilty conscience). It
+contains scripts/programs that help managing, building, and developing the
+project.

@@ -1,0 +1,24 @@
+Standard: POSIX.1-2008, IEEE Std 1003.1™-2008, The Open Group Technical
+          Standard Base Specifications, Issue 7
+
+<limits.h>:
+
+
+
+<unistd.h>:
+
+
+
+Implementation-defined behaviors:
+
+[feature description] : [pointer to documentation|full syntax and semantics of
+                                                  the feature],
+...
+
+
+[Undefined and unspecified behaviors:]
+
+...
+
+
+
