@@ -1,0 +1,5 @@
+*.o # object files
+*.gch # precompiled headers
+*.sym # debug symbol files
+*.out # temporary executables
+*.img # binary images
