@@ -15,6 +15,7 @@ define(`FLOPPY_DRV', `0x0')
 /* The bootloader is loaded to physical address `0x7c00'. It then loads the
  * remaining boot system to `0x400' (right after the IVT), effectively
  * overriding the BDA (interrupts are disabled to prevent BDA changes).
+ */
 
 .code16
 
