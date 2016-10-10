@@ -37,8 +37,9 @@ kernel_objs =
 run: boot.img # kernel.img
 	qemu-system-i386 -fda $<
 
-debug: boot.img #kernel.img
-	qemu-system-i386 -fda $< -s -S
+boot_debug: boot.img
+	qemu-system-i386 -fda $< -s -S &
+	gdb -x boot.img
 
 all: boot.img boot.sym #kernel.img kernel.sym
 
