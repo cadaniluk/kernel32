@@ -34,19 +34,19 @@ kernel_objs =
 # TODO: merge run and debug targets and decide to debug or not using the dbg
 # parameter.
 
-boot_debug: boot.img boot.sym
-	qemu-system-i386 -fda $< -s -S &
+boot_debug: boot.sym boot.img
+	qemu-system-i386 -fda boot.img -s -S &
 	gdb -x boot.gdb
 
-all: boot.img boot.sym #kernel.img kernel.sym
+all: boot.sym boot.img #kernel.img kernel.sym
 
 boot.img: boot.out
 boot.sym: boot.out
 boot.out: $(boot_objs)
 	$(LD) -T boot.ld $(boot_objs) $(LDFLAGS)
 
-kernel.img: kernel.out
 kernel.sym: kernel.out
+kernel.img: kernel.out
 kernel.out: $(kernel_objs)
 	$(LD) -T kernel.ld $(kernel_objs) $(LDFLAGS)
 
