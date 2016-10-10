@@ -11,7 +11,7 @@ M4FLAGS =
 M4GLOBAL = global.m4
 
 ASFLAGS += --32 -g
-CFLAGS += -std=c11 -Wall -Wextra -pedantic -g # -O3
+CFLAGS += -m32 -std=c11 -Wall -Wextra -pedantic -g # -O3
 LDFLAGS += -melf_i386
 
 %.o: %.S
