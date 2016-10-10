@@ -39,7 +39,7 @@ run: boot.img # kernel.img
 
 boot_debug: boot.img
 	qemu-system-i386 -fda $< -s -S &
-	gdb -x boot.img
+	gdb -x boot.gdb
 
 all: boot.img boot.sym #kernel.img kernel.sym
 
