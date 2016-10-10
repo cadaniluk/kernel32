@@ -34,10 +34,7 @@ kernel_objs =
 # TODO: merge run and debug targets and decide to debug or not using the dbg
 # parameter.
 
-run: all
-	qemu-system-i386 -fda $<
-
-boot_debug: all
+boot_debug: boot.img boot.sym
 	qemu-system-i386 -fda $< -s -S &
 	gdb -x boot.gdb
 
@@ -57,4 +54,4 @@ clean:
 	rm -f $(boot_objs) $(kernel_objs) *.out *.img *.sym
 
 
-.PHONY: all clean run
+.PHONY: boot_debug all clean run
