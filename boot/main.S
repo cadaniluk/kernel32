@@ -1,5 +1,5 @@
-define(`BOOTSYS_SEG', `0x7c0')
-define(`BOOTSYS_OFF', `0x200')
+define(`BOOTSYS_SEG', `0x7e0')
+define(`BOOTSYS_OFF', `0x0')
 define(`BOOTSYS_SIZE', `0x1')
 define(`BOOTSYS_C', `0x0')
 define(`BOOTSYS_H', `0x0')
@@ -9,6 +9,10 @@ define(`FLOPPY_DRV', `0x0')
  * detect micro-optimizations but using calls to functions,
  * for example! the apm functions, for example, can all be wrapped into
  * call functions and thus we can save valuable bootloader space. */
+
+define(`VID_SEG', `0xb800')
+define(`NUM_COLS', `80')
+define(`VID_ATTR', `0xf')
 
 /* TODO: add real mode support! add protected mode 16-bit support! */
 
@@ -22,12 +26,26 @@ define(`FLOPPY_DRV', `0x0')
 .global boot_start
 
 .data
+verify_cpu: .asciz "Verifying CPU..."
+cpu32: .asciz "32-bit-compatible... ready to go!"
+not_cpu32: .asciz "Not 32-bit-compatible... kernel cannot start up."
+
+curr_line: .byte 0x0
 
 .text
 boot_start:
 	/* NOTE: this part must be 8086-compatible, so the checking process
 	 * below can be performed on any x86 CPU! */
 
+	/* Enable video mode `0x3'. */
+	mov $0x3, %ah
+	int $0x10
+
+	xor %ax, %ax
+	mov %ax, %ds
+	mov $verify_cpu, %si
+	call puts
+lbll:
 	/* TODO: check for intel 64 as well and take appropriate action! */
 	/* First, make sure we are actually running a 32-bit CPU. We do this
 	 * by verifying that the MSB of the `flags' register is always clear
@@ -44,6 +62,9 @@ boot_start:
 	pop %ax
 	cmp %ax, %dx
 	jne no_32b
+lbl:
+	mov $cpu32, %si
+	call puts
 
 	/* Now, load the Real Mode part of the kernel, effectively, a
 	 * second-stage bootloader. Retry three times, as recommended by
@@ -81,7 +102,39 @@ ljmp $BOOTSYS_SEG, $BOOTSYS_OFF
 
 /* TODO: change that to something more sophisticated later! */
 no_32b:
-/* TODO: move floppy_err someplace else. */
+	mov $not_cpu32, %si
+	call puts
+
+	cli
+	hlt
+
 floppy_err:
 	cli
 	hlt
+
+/* `ds:si' - string to print */
+/* Currently only goes to the next line... add video driver support and
+ * use the video driver then! */
+puts:
+	push %ax
+	push %es
+
+	mov $NUM_COLS, %al
+	mulb curr_line
+	mov %ax, %di
+	incb curr_line
+
+	mov $VID_SEG, %ax
+	mov %ax, %es
+	mov $VID_ATTR, %ah
+1:
+	lodsb
+	test %al, %al
+	jz 2f
+	stosw
+	jmp 1b
+2:
+	pop %es
+	pop %ax
+
+	ret
