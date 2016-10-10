@@ -38,7 +38,7 @@ boot_start:
 	 * below can be performed on any x86 CPU! */
 
 	/* Enable video mode `0x3'. */
-	mov $0x3, %ah
+	mov $0x3, %ax
 	int $0x10
 
 	xor %ax, %ax
