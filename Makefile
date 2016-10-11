@@ -29,6 +29,7 @@ LDFLAGS += -melf_i386
 
 
 boot_objs = boot/main.o
+bootsys_objs = bootsys/main.o
 kernel_objs = 
 
 # TODO: merge run and debug targets and decide to debug or not using the dbg
@@ -38,12 +39,19 @@ boot_debug: boot.sym boot.img
 	qemu-system-i386 -fda boot.img -s -S &
 	gdb -x boot.gdb
 
-all: boot.sym boot.img #kernel.img kernel.sym
+bootsys_debug: bootsys.sym bootsys.img
+
+all: boot.sym boot.img bootsys.sym bootsys.img #kernel.img kernel.sym
 
 boot.img: boot.out
 boot.sym: boot.out
 boot.out: $(boot_objs)
 	$(LD) -T boot.ld $(boot_objs) $(LDFLAGS)
+
+bootsys.img: bootsys.out
+bootsys.sym: bootsys.out
+bootsys.out: $(bootsys_objs)
+	$(LD) -T bootsys.ld $(bootsys_objs) $(LDFLAGS)
 
 kernel.sym: kernel.out
 kernel.img: kernel.out
