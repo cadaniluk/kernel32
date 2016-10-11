@@ -59,7 +59,7 @@ kernel.out: $(kernel_objs)
 	$(LD) -T kernel.ld $(kernel_objs) $(LDFLAGS)
 
 clean:
-	rm -f $(boot_objs) $(kernel_objs) *.out *.img *.sym
+	rm -f $(boot_objs) $(bootsys_objs) $(kernel_objs) *.out *.img *.sym
 
 
 .PHONY: boot_debug all clean run
