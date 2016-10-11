@@ -1,10 +1,11 @@
 define(`BOOTSYS_SEG', `0x7e0')
 define(`BOOTSYS_OFF', `0x0')
-define(`BOOTSYS_SIZE', `0x1')
+define(`BOOTSYS_SIZE', `0x1') /* in 512-byte sectors */
 define(`BOOTSYS_C', `0x0')
 define(`BOOTSYS_H', `0x0')
-define(`BOOTSYS_S', `0x1')
+define(`BOOTSYS_S', `0x2')
 define(`FLOPPY_DRV', `0x0')
+
 /* TODO: optimize the whole code! not by using subtle and hard-to-
  * detect micro-optimizations but using calls to functions,
  * for example! the apm functions, for example, can all be wrapped into
@@ -16,9 +17,16 @@ define(`VID_ATTR', `0xf')
 
 /* TODO: add real mode support! add protected mode 16-bit support! */
 
-/* The bootloader is loaded to physical address `0x7c00'. It then loads the
- * remaining boot system to `0x400' (right after the IVT), effectively
- * overriding the BDA (interrupts are disabled to prevent BDA changes).
+/*
+ * The bootloader is loaded to physical address `0x7c00'. It does some stuff
+ * and loads the 16-bit boot system to `0x7e00'. Assuming the memory until
+ * `0x90000' is free (the EBDA starts somewhere around `0x9fc00', but it is
+ * not standardized, AFAIK), the boot system has over 512 KiB space. That
+ * must suffice. If it does not, we can still move the bootloader to `0x500'
+ * right after IVT and BDA to give us an additional `0x7700' bytes. If that
+ * does not suffice, we can activate Unreal Mode for theoretical 4 GiB if
+ * the machine provides those. And if that does not suffice... well,
+ * then I'm just too dumb to write 16-bit code smaller than 4 GiB.
  */
 
 .code16
@@ -34,6 +42,11 @@ curr_line: .byte 0x0
 
 .text
 boot_start:
+	/* Set up a basic stack. */
+	mov $0x50, %ax /* Stack segment points to right after the BDA */
+	mov %ax, %ss
+	mov $0x76fe, %sp /* word-aligned, so must be even */
+
 	/* NOTE: this part must be 8086-compatible, so the checking process
 	 * below can be performed on any x86 CPU! */
 
@@ -45,7 +58,7 @@ boot_start:
 	mov %ax, %ds
 	mov $verify_cpu, %si
 	call puts
-lbll:
+
 	/* TODO: check for intel 64 as well and take appropriate action! */
 	/* First, make sure we are actually running a 32-bit CPU. We do this
 	 * by verifying that the MSB of the `flags' register is always clear
@@ -62,10 +75,12 @@ lbll:
 	pop %ax
 	cmp %ax, %dx
 	jne no_32b
-lbl:
+
 	mov $cpu32, %si
 	call puts
 
+	
+before:
 	/* Now, load the Real Mode part of the kernel, effectively, a
 	 * second-stage bootloader. Retry three times, as recommended by
 	 * RBIL. */
@@ -78,9 +93,9 @@ lbl:
 /* TODO: add some checking so that not too much sectors are loaded even though
  * there isn't enough space! also check (at preprocessing time) that the sector
  * number is not impossibly high! */
-	mov $0x2 | BOOTSYS_SIZE, %ax
-	mov (BOOTSYS_C << 8) | BOOTSYS_S, %cx
-	mov (BOOTSYS_H << 8) | FLOPPY_DRV, %dx 
+	mov $0x200 | BOOTSYS_SIZE, %ax
+	mov $(BOOTSYS_C << 0x8) | BOOTSYS_S, %cx
+	mov $(BOOTSYS_H << 0x8) | FLOPPY_DRV, %dx 
 	int $0x13
 	jnc 1f
 	cmp $0x2, %bp
@@ -91,11 +106,7 @@ lbl:
 	jmp 1b
 1:
 
-/* TODO: the bootloader is small but not that small that there is no more space
- * available in it for more code than currently written. so you can add more
- * to this loader! but do not let it get all too messy! */
-
-
+lbl:
 /* TODO: verify at preprocessing time that bootsys_seg:bootsys_off is aligned
  * on word oundaries! */
 ljmp $BOOTSYS_SEG, $BOOTSYS_OFF
