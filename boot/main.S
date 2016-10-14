@@ -15,8 +15,6 @@ define(`VID_SEG', `0xb800')
 define(`NUM_COLS', `80')
 define(`VID_ATTR', `0xf')
 
-/* TODO: add real mode support! add protected mode 16-bit support! */
-
 /*
  * The bootloader is loaded to physical address `0x7c00'. It does some stuff
  * and loads the 16-bit boot system to `0x7e00'. Assuming the memory until
