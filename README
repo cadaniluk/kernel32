@@ -9,23 +9,23 @@ ld, (perhaps) m4, objdump, objcopy, and more I cannot think of right now.
 
 Rules
 
-1 The GNU as directive `.set` and similar directives are avoided. Use the
+1. The GNU as directive `.set` and similar directives are avoided. Use the
   C preprocessor instead. Optionally, yet another preprocessor like GNU m4 can
   be used.
-2 Setters are called `setxxx`. Getters are called `xxx`.
-3 Header files are divided into sections for the assembler and for the
+2. Setters are called `setxxx`. Getters are called `xxx`.
+3. Header files are divided into sections for the assembler and for the
   compiler. Code only for the assembler is surrounded by a `#if __ASSEMBLER__
   == 1 ... #endif` macro pair, code only for the compiler is embraced by a `#if
   __ASSEMBLER__ != 1 ... #endif` macro pair, and code for both is free of
   conditional macros of that kind. `__ASSEMBLER__` is a standard predefined
   macro
-4 All code is C11-compliant. Mainly to support variable definitions within
+4. All code is C11-compliant. Mainly to support variable definitions within
   for-loops and use the wonderful `static_assert` feature.
-5 Use macros instead of `enum`s to retain compatibility to assembly code.
+5. Use macros instead of `enum`s to retain compatibility to assembly code.
   This particular rule might be argued about but I'm prepared for any
   counter argument.
-6 The number of columns of a source file is limited to 80.
-7 One indentation level amounts to one tab (with preferably eight spaces).
+6. The number of columns of a source file is limited to 80.
+7. One indentation level amounts to one tab (with preferably eight spaces).
 
 Parts
 
