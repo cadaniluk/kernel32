@@ -33,15 +33,14 @@ The whole project is split into two parts: the part responsible for booting
 and the actual kernel. These two parts are to be kept split; do not create
 dependencies between those, only clean interfaces.
 
-The booting part includes the first-stage bootloader and any other booting
-instances prior to the execution of the kernel. All these preliminary parts
-prepare the load of the kernel into memory and its final execution: they
-determine data (memory size, hardware available, etc.), load the corresponding
-next stage (and eventually the kernel), move I/O-mapped memory, program
-controllers, and whatever.
-It is written in assembler because GCC currently does not support real 16-bit
-code; it just emits 32-bit and adds size override prefixes, which gets really
-lengthy, especially in a 512-byte-confined bootloader. 
+The booting part includes the first-stage bootloader and the booting system,
+which basically prepares the load of the kernel into memory and its final
+execution: they determine data (memory size, hardware available, etc.), load the
+corresponding next stage (and eventually the kernel), move I/O-mapped memory,
+program controllers, and whatever. It is written in assembler because GCC
+currently does not support real 16-bit code; it just emits 32-bit and adds size
+override prefixes, which gets really lengthy, especially in a 512-byte-confined
+bootloader. 
 
 The kernel is, well, the kernel. A thorough description is given spread across
 all source files (TODO: which is to be summarized to one `/doc` directory
