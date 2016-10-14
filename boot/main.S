@@ -6,6 +6,9 @@ define(`BOOTSYS_H', `0x0')
 define(`BOOTSYS_S', `0x2')
 define(`FLOPPY_DRV', `0x0')
 
+define(`BOOT_SS', `0x50') /* right after BDA */
+define(`BOOT_SP', `0x76fe') /* word-aligned, right before bootloader */
+
 /* TODO: optimize the whole code! not by using subtle and hard-to-
  * detect micro-optimizations but using calls to functions,
  * for example! the apm functions, for example, can all be wrapped into
