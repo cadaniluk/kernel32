@@ -44,9 +44,9 @@ curr_line: .byte 0x0
 .text
 boot_start:
 	/* Set up a basic stack. */
-	mov $0x50, %ax /* Stack segment points to right after the BDA */
+	mov $BOOT_SS, %ax /* Stack segment points to right after the BDA */
 	mov %ax, %ss
-	mov $0x76fe, %sp /* word-aligned, so must be even */
+	mov $BOOT_SP, %sp /* word-aligned, so must be even */
 
 	/* NOTE: this part must be 8086-compatible, so the checking process
 	 * below can be performed on any x86 CPU! */
