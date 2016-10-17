@@ -18,7 +18,7 @@ MEMORY {
 SECTIONS {
 	.text : { *(.text) } > boot
 	.data : { *(.data) } > boot
-	.end : AT(0x7dfe) { SHORT(0xaa55); } > boot
+	.boot_sig : AT(0x7dfe) { SHORT(0xaa55); } > boot
 
 	.bootsys_text : { *(.bootsys_text) } > bootsys
 	.bootsys_data : { *(.bootsys_data) } > bootsys
