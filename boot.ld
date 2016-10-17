@@ -1,8 +1,10 @@
 OUTPUT(boot.out)
 ENTRY(boot_start)
 
-# TODO: find a way to have common variables for linker scripts and C & asm.
-# the best way would be to just use m4. figure out how to do that!
+/*
+ * TODO: find a way to have common variables for linker scripts and C & asm.
+ * the best way would be to just use m4. figure out how to do that!
+ */
 
 bootsys_size = 0x10000;
 limit = 0x90000;
