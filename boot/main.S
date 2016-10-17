@@ -20,21 +20,21 @@ define(`VID_ATTR', `0xf')
 
 /*
  * The bootloader is loaded to physical address `0x7c00'. It does some stuff
- * and loads the 16-bit boot system to `0x7e00'. Assuming the memory until
- * `0x90000' is free (the EBDA starts somewhere around `0x9fc00', but it is
- * not standardized, AFAIK), the boot system has over 512 KiB space. That
- * must suffice. If it does not, we can still move the bootloader to `0x500'
- * right after IVT and BDA to give us an additional `0x7700' bytes (minus
- * those occupied by bootloader drivers). If that does not suffice, we can
- * activate Unreal Mode for theoretical 4 GiB if the machine provides those.
- * And if that does not suffice... well, then I'm just too dumb to write 16-bit
- * code smaller than 4 GiB. While the main tasks are all delegated to the boot
- * system (bootsys), the bootloader performs some actions, which require support
- * from other systems in the computer. Those in turn may require drivers, which,
- * if the need arises, are loaded into memory from the bootloader at `0x500'.
- * There is free space until the start of the bootloader at `0x7c00', which is
- * about 30 KiB. That should be more than enough.
+ * and loads the 16-bit boot system to the highest address possible, right under
+ * `0x90000', assuming the memory until `0x90000' is free (the EBDA starts
+ * somewhere around `0x9fc00', but it is not standardized, AFAIK). This way, the
+ * boot system has about 512 KiB free memory, which simply must suffice.
+ * Technically, we can do crazy stuff such as switching to Unreal Mode, which
+ * gives us a maximum of 4 GiB, but that should not be necessary.
+ * The boot system loads the kernel in turn to address `0x0'. It has free
+ * space until the start address of the boot system. Should this prove
+ * insufficient, we can either split the kernel in two parts, below and over
+ * 1 MiB, or do it as Linux does, i.e., load the whole kernel over 1 MiB. This
+ * is actually the cleanest way I think, but I do not think the kernel is
+ * getting that big, so we can load the kernel in the first MiB and user
+ * programs above.
  */
+
 
 .code16
 
