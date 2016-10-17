@@ -14,11 +14,13 @@ ASFLAGS += --32 -g
 CFLAGS += -m32 -std=c11 -Wall -Wextra -pedantic -g # -O3
 LDFLAGS += -melf_i386
 
+# TODO: maybe add a variable for m4/asm.m4 and m4/c.m4 like m4/global.m4
+
 %.o: %.S
-	$(M4) $(M4GLOBAL) $< $(M4FLAGS) | $(AS) -o $@ $(ASFLAGS)
+	$(M4) $(M4GLOBAL) m4/asm.m4 $< $(M4FLAGS) | $(AS) -o $@ $(ASFLAGS)
 
 %.o: %.c
-	$(M4) $(M4GLOBAL) $< $(M4FLAGS) | $(CC) -c -o $@ $(CFLAGS)
+	$(M4) $(M4GLOBAL) m4/c.m4 $< $(M4FLAGS) | $(CC) -c -o $@ $(CFLAGS)
 
 %.sym: %.out
 	objcopy --only-keep-debug $< $@
