@@ -87,7 +87,6 @@ boot_start:
 	call puts
 
 	
-before:
 	/* Now, load the Real Mode part of the kernel, effectively, a
 	 * second-stage bootloader. Retry three times, as recommended by
 	 * RBIL. */
@@ -113,7 +112,6 @@ before:
 	jmp 1b
 1:
 
-lbl:
 /* TODO: verify at preprocessing time that bootsys_seg:bootsys_off is aligned
  * on word oundaries! */
 ljmp $BOOTSYS_SEG, $BOOTSYS_OFF
