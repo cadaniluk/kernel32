@@ -24,10 +24,16 @@ define(`VID_ATTR', `0xf')
  * `0x90000' is free (the EBDA starts somewhere around `0x9fc00', but it is
  * not standardized, AFAIK), the boot system has over 512 KiB space. That
  * must suffice. If it does not, we can still move the bootloader to `0x500'
- * right after IVT and BDA to give us an additional `0x7700' bytes. If that
- * does not suffice, we can activate Unreal Mode for theoretical 4 GiB if
- * the machine provides those. And if that does not suffice... well,
- * then I'm just too dumb to write 16-bit code smaller than 4 GiB.
+ * right after IVT and BDA to give us an additional `0x7700' bytes (minus
+ * those occupied by bootloader drivers). If that does not suffice, we can
+ * activate Unreal Mode for theoretical 4 GiB if the machine provides those.
+ * And if that does not suffice... well, then I'm just too dumb to write 16-bit
+ * code smaller than 4 GiB. While the main tasks are all delegated to the boot
+ * system (bootsys), the bootloader performs some actions, which require support
+ * from other systems in the computer. Those in turn may require drivers, which,
+ * if the need arises, are loaded into memory from the bootloader at `0x500'.
+ * There is free space until the start of the bootloader at `0x7c00', which is
+ * about 30 KiB. That should be more than enough.
  */
 
 .code16
