@@ -8,7 +8,7 @@ SHELL = /bin/bash
 
 M4 = m4
 M4FLAGS = 
-M4GLOBAL = global.m4
+M4GLOBAL = m4/global.m4
 
 ASFLAGS += --32 -g
 CFLAGS += -m32 -std=c11 -Wall -Wextra -pedantic -g # -O3
