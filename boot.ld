@@ -3,8 +3,8 @@ ENTRY(boot_start)
 
 SECTIONS {
 	. = 0x500;
-	.text_util : { *(.text_util) }
-	.data_util : { *(.data_util) }
+	.bootsys_text : { *(.bootsys_text) }
+	.bootsys_data : { *(.bootsys_data) }
 	. = 0x7c00;
 	.text : { *(.text) }
 	.data : { *(.data) }
