@@ -1,0 +1,4 @@
+sec_storage (hdd, floppy): which secondary storage medium is used. if not
+defined, determine at runtime
+
+
