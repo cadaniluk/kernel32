@@ -30,8 +30,7 @@ LDFLAGS += -melf_i386
 	objcopy -O binary $< $@
 
 
-boot_objs = boot/main.o
-bootsys_objs = bootsys/main.o
+boot_objs = boot/boot.o boot/main.o boot/floppy_errs.o
 kernel_objs = 
 
 # TODO: merge run and debug targets and decide to debug or not using the dbg
@@ -41,19 +40,12 @@ boot_debug: boot.sym boot.img
 	qemu-system-i386 -fda boot.img -s -S &
 	gdb -x boot.gdb
 
-bootsys_debug: bootsys.sym bootsys.img
-
-all: boot.sym boot.img bootsys.sym bootsys.img #kernel.img kernel.sym
+all: boot.sym boot.img #kernel.img kernel.sym
 
 boot.img: boot.out
 boot.sym: boot.out
 boot.out: $(boot_objs)
 	$(LD) -T boot.ld $(boot_objs) $(LDFLAGS)
-
-bootsys.img: bootsys.out
-bootsys.sym: bootsys.out
-bootsys.out: $(bootsys_objs)
-	$(LD) -T bootsys.ld $(bootsys_objs) $(LDFLAGS)
 
 kernel.sym: kernel.out
 kernel.img: kernel.out
@@ -61,7 +53,7 @@ kernel.out: $(kernel_objs)
 	$(LD) -T kernel.ld $(kernel_objs) $(LDFLAGS)
 
 clean:
-	rm -f $(boot_objs) $(bootsys_objs) $(kernel_objs) *.out *.img *.sym
+	rm -f $(boot_objs) $(boot_objs) $(kernel_objs) *.out *.img *.sym
 
 
 .PHONY: boot_debug all clean run
