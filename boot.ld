@@ -1,25 +1,22 @@
+include(`boot.h')
+
 OUTPUT(boot.out)
 ENTRY(boot_start)
 
-/*
- * TODO: find a way to have common variables for linker scripts and C & asm.
- * the best way would be to just use m4. figure out how to do that!
- */
-
-bootsys_size = 0x10000;
-limit = 0x90000;
-
 MEMORY {
-	boot : org = 0x7c00, len = 0x200
-	bootsys : org = limit - bootsys_size, len = limit
+	boot : org = BOOT_TEXT, len = BOOT_SIZE
+	bootsys : org = BOOTSYS_TEXT % 0x10, len = BOOTSYS_LEN
 }
 
 
 SECTIONS {
 	.text : { *(.text) } > boot
 	.data : { *(.data) } > boot
-	.boot_sig : AT(0x7dfe) { SHORT(0xaa55); } > boot
+	.boot_sig : AT(BOOT_TEXT + BOOT_SIZE - 0x2) { SHORT(0xaa55); } > boot
 
-	.bootsys_text : { *(.bootsys_text) } > bootsys
-	.bootsys_data : { *(.bootsys_data) } > bootsys
+	.bootsys_text : AT(BOOT_TEXT + BOOT_SIZE) { *(.bootsys_text) } > bootsys
+	.bootsys_data : AT(LOADADDR(.bootsys_text) + SIZEOF(.bootsys_text)) {
+	*(.bootsys_data) } > bootsys
 }
+
+/* TODO: is the at command for bootsys_data really necessary? */
