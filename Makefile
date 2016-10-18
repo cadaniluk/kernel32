@@ -29,6 +29,9 @@ LDFLAGS += -melf_i386
 	objcopy --strip-debug --strip-unneeded $<
 	objcopy -O binary $< $@
 
+%.ld.m4: %.ld
+	$(M4) $(M4GLOBAL) $< $(M4FLAGS) > $@
+
 
 boot_objs = boot/boot.o boot/main.o boot/floppy_errs.o
 kernel_objs = 
@@ -44,16 +47,17 @@ all: boot.sym boot.img #kernel.img kernel.sym
 
 boot.img: boot.out
 boot.sym: boot.out
-boot.out: $(boot_objs)
-	$(LD) -T boot.ld $(boot_objs) $(LDFLAGS)
+boot.out: $(boot_objs) boot.ld.m4
+	$(LD) -T boot.ld.m4 $(boot_objs) $(LDFLAGS)
 
 kernel.sym: kernel.out
 kernel.img: kernel.out
-kernel.out: $(kernel_objs)
-	$(LD) -T kernel.ld $(kernel_objs) $(LDFLAGS)
+kernel.out: $(kernel_objs) kernel.ld.m4
+	$(LD) -T kernel.ld.m4 $(kernel_objs) $(LDFLAGS)
 
 clean:
-	rm -f $(boot_objs) $(boot_objs) $(kernel_objs) *.out *.img *.sym
+	rm -f $(boot_objs) $(boot_objs) $(kernel_objs) *.out *.img *.sym \
+	*.ld.m4
 
 
 .PHONY: boot_debug all clean run
