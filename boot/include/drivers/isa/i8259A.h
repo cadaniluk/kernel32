@@ -105,7 +105,7 @@
  * OCWs can be sent to the controller anytime after initialization thereof.
  */
 
-ifdef(`i8259A_H',,`
+ifdef(`i8259A_H',,
 define(`i8259A_H')
 
 include(`types.h')
@@ -363,7 +363,7 @@ define(`i8259A_imr_rd', `call i8259A_ocw1_rd')
  * None. */
 define(`i8259A_imr_wr', `call i8259A_ocw1')
 
-',`
+',
 
 /* Using bits 0 - 1 in OCW3 you can select which register is to be read,
  * either IRR or ISR. The thing is we do not need to issue an OCW3 every time
@@ -494,7 +494,7 @@ static inline void i8259A_icw4(uint8_t icw4, uint16_t base) {
     i8259A_out(i8259A_ICW4(icw4), base | i8259A_A0_ICW4);
 }
 
-') /* __ASSEMBLER__,`1' */
+) /* __ASSEMBLER__,`1' */
 
-') /* i8259A_H */
+) /* i8259A_H */
 
