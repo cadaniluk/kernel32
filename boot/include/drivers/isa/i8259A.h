@@ -133,7 +133,7 @@ define(`i8259A_SBASE', `0xa0')
 
 /* Generates ICW1. `0x10' sets bit 4, which, together with a cleared A0,
  * indicates ICW1. */
-define(`i8259A_ICW1', `(0x10 | ($1)')
+define(`i8259A_ICW1', `(0x10 | ($1))')
 
 define(`i8259A_A0_ICW1', `0x0')
 
@@ -383,7 +383,6 @@ extern uint8_t rd_reg;
  *
  * Return Value:
  * The content of the ISR. */
-
 static inline uint8_t i8259A_isr_rd(uint16_t base) {
     if (!(rd_reg & i8259A_RDISR))
         i8259A_ocw3_wr(0x3, i8259A_RD | i8259A_RDISR, base);
@@ -498,3 +497,4 @@ static inline void i8259A_icw4(uint8_t icw4, uint16_t base) {
 ') /* __ASSEMBLER__,`1' */
 
 ') /* i8259A_H */
+
