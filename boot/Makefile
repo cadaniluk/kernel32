@@ -33,7 +33,7 @@ $(ROOT)/boot.out: $(boot_objs) boot.ld.m4
 	$(LD) -T boot.ld.m4 $(boot_objs) $(LDFLAGS)
 
 clean:
-	rm -f $(boot_objs) *.out *.ld.m4
+	rm -f $(boot_objs) *.ld.m4
 
 
-.PHONY: all clean run
+.PHONY: all clean

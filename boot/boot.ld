@@ -1,6 +1,6 @@
-include(`../boot.m4')
+include(`boot.m4')
 
-OUTPUT(boot.out)
+OUTPUT(../boot.out)
 ENTRY(boot_start)
 
 MEMORY {
