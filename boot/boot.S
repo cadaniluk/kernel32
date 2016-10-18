@@ -1,5 +1,5 @@
-define(`BOOTSYS_SEG', `0x7e0')
-define(`BOOTSYS_OFF', `0x0')
+include(`boot.h')
+
 define(`BOOTSYS_SIZE', `0x1') /* in 512-byte sectors */
 define(`BOOTSYS_C', `0x0')
 define(`BOOTSYS_H', `0x0')
@@ -92,10 +92,9 @@ boot_start:
 	 * RBIL. */
 	xor %bp, %bp
 1:
-/* TODO: define BOOTSYS constants sopmewhere and FLOPPY_DRV! */
-	mov $BOOTSYS_SEG, %ax
+	mov $BOOTSYS_TEXT / 0x10, %ax
 	mov %ax, %es
-	mov $BOOTSYS_OFF, %bx
+	mov $BOOTSYS_TEXT % 0x10, %bx
 /* TODO: add some checking so that not too much sectors are loaded even though
  * there isn't enough space! also check (at preprocessing time) that the sector
  * number is not impossibly high! */
@@ -114,7 +113,7 @@ boot_start:
 
 /* TODO: verify at preprocessing time that bootsys_seg:bootsys_off is aligned
  * on word oundaries! */
-ljmp $BOOTSYS_SEG, $BOOTSYS_OFF
+ljmp $BOOTSYS_TEXT / 0x10, $BOOTSYS_TEXT % 0x10
 
 /* TODO: change that to something more sophisticated later! */
 no_32b:
