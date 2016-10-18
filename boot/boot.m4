@@ -1,4 +1,5 @@
 ifdef(`BOOT_H',,`
+define(`BOOT_H')
 
 define(`BOOT_TEXT', `0x7c00')
 define(`BOOT_SIZE', `0x200')
