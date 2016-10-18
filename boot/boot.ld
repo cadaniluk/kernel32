@@ -1,4 +1,4 @@
-include(`../boot.h')
+include(`../boot.m4')
 
 OUTPUT(boot.out)
 ENTRY(boot_start)

@@ -1,4 +1,4 @@
-include(`../boot.h')
+include(`../boot.m4')
 include(`include/drivers/cmos.h')
 
 define(`BOOTSYS_C', `0x0')
