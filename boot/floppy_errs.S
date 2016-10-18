@@ -2,7 +2,7 @@
 
 .global disk_status_table
 
-SEC_R_DATA(.bootsys_data)
+SEC_R_DATA(`.bootsys_data')
 
 /* TODO: if the need arises, add the other error msgs as well! */
 disk_status_table:
