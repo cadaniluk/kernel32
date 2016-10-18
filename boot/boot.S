@@ -1,6 +1,6 @@
 include(`boot.h')
+include(`cmos.h')
 
-define(`BOOTSYS_SIZE', `0x1') /* in 512-byte sectors */
 define(`BOOTSYS_C', `0x0')
 define(`BOOTSYS_H', `0x0')
 define(`BOOTSYS_S', `0x2')
@@ -67,9 +67,11 @@ boot_start:
 	call puts
 
 	/* TODO: check for intel 64 as well and take appropriate action! */
-	/* First, make sure we are actually running a 32-bit CPU. We do this
+	/*
+	 * First, make sure we are actually running a 32-bit CPU. We do this
 	 * by verifying that the MSB of the `flags' register is always clear
-	 * and bits 12 through 14 are arbitrarily modifiable. */
+	 * and bits 12 through 14 are arbitrarily modifiable.
+	 */
 	pushf
 	pop %ax
 	xor $0x7000, %ax
@@ -86,19 +88,24 @@ boot_start:
 	mov $cpu32, %si
 	call puts
 
+	/*
+	 * Determine storage medium and checking validity of sector number
+	 * according to those values.
+	 */
+
+	/* TODO: access cmos here! */
+
 	
 	/* Now, load the Real Mode part of the kernel, effectively, a
-	 * second-stage bootloader. Retry three times, as recommended by
-	 * RBIL. */
+	 * second-stage bootloader. Retry three times because the read
+	 * command does not have a time-out. */
 	xor %bp, %bp
 1:
 	mov $BOOTSYS_TEXT / 0x10, %ax
 	mov %ax, %es
 	mov $BOOTSYS_TEXT % 0x10, %bx
-/* TODO: add some checking so that not too much sectors are loaded even though
- * there isn't enough space! also check (at preprocessing time) that the sector
- * number is not impossibly high! */
-	mov $0x200 | BOOTSYS_SIZE, %ax
+/* TODO: add rounding up here for bootsys_size! */
+	mov $0x200 | (BOOTSYS_SIZE / 0x200), %ax
 	mov $(BOOTSYS_C << 0x8) | BOOTSYS_S, %cx
 	mov $(BOOTSYS_H << 0x8) | FLOPPY_DRV, %dx 
 	int $0x13
