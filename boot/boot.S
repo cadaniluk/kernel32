@@ -44,6 +44,7 @@ define(`VID_ATTR', `0xf')
 verify_cpu: .asciz "Verifying CPU..."
 cpu32: .asciz "32-bit-compatible... ready to go!"
 not_cpu32: .asciz "Not 32-bit-compatible... kernel cannot start up."
+press_key: .asciz "Press a key to reboot..."
 
 curr_line: .byte 0x0
 
@@ -127,12 +128,10 @@ no_32b:
 	mov $not_cpu32, %si
 	call puts
 
-	cli
-	hlt
+	jmp reboot
 
 floppy_err:
-	cli
-	hlt
+	jmp reboot
 
 /* `ds:si' - string to print */
 /* Currently only goes to the next line... add video driver support and
@@ -160,3 +159,9 @@ puts:
 	pop %ax
 
 	ret
+
+reboot:
+	mov $press_key, %si
+	call puts
+
+	ljmp $0xf000, $0xfff0
