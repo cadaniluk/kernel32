@@ -108,9 +108,6 @@
 ifdef(`i8259A_H',,
 define(`i8259A_H')
 
-include(`types.h')
-include(`io.h')
-
 /* #####################
  * # COMMON I/O PORTS: #
  * ##################### */
@@ -338,8 +335,6 @@ define(`i8259A_RDREG', `0x2')
 define(`i8259A_RDISR', `0x1')
 
 
-ifelse(__ASSEMBLER__,`1',`
-
 /* #################
  * # REGISTER I/O: #
  * ################# */
@@ -362,139 +357,6 @@ define(`i8259A_imr_rd', `call i8259A_ocw1_rd')
  * Return Value:
  * None. */
 define(`i8259A_imr_wr', `call i8259A_ocw1')
-
-',
-
-/* Using bits 0 - 1 in OCW3 you can select which register is to be read,
- * either IRR or ISR. The thing is we do not need to issue an OCW3 every time
- * we want to read these registers; it is more like a flag, which is changed
- * for every OCW3. By default, that flag indicates IRR to be read.
- * I know this is really bad; an internal variable exposed to the user
- * in shape of a declaration in the header file... Christ, that's really
- * crappy. But it works and I don't know how to do it better. `static inline'
- * functions with `static' variables will generate one `static' variable
- * copy for every definition, so I cannot use that as well. :-( */
-extern uint8_t rd_reg;
-
-/* Reads the ISR's content.
- *
- * Parameters:
- * `%dx' - The base I/O port of the PIC.
- *
- * Return Value:
- * The content of the ISR. */
-static inline uint8_t i8259A_isr_rd(uint16_t base) {
-    if (!(rd_reg & i8259A_RDISR))
-        i8259A_ocw3_wr(0x3, i8259A_RD | i8259A_RDISR, base);
-
-    return i8259A_ocw3_rd(base);
-}
-
-/* Reads the IRR's content. */
-static inline uint8_t i8259A_irr_rd(uint16_t base) {
-    if (rd_reg & i8259A_RDISR)
-        i8259A_ocw3_wr(0x3, i8259A_RDREG, base); /* 0 - IRR; no macro because I
-                                                * only want to use macros when
-                                                * exposing something to the user
-                                                * not in the implementation */
-    return i8259A_ocw3_rd(base);
-}
-
-
-/* TODO: finish that driver! make it a bit more readable, put the code in
- * some order. some functions haven't been completed or implemented at all
- * yet. be aware that some bits create dependencies to other registers or
- * command words. example:
- * 2-273:
- * it should be noted that an is bit that is masked
- * by an imr bit will not be cleared by a non-specific
- * eoi if the 8259a is in the special mask mode.
- *
- * don't get trapped in those subtleties. they
- * might create bad bugs in the driver and are
- * malevolent. read carefully and FINISH THAT DRIVER!!! */
-
-/* #################
- * # EOI COMMANDS: #
- * ################# */
-
-static inline void i8259A_eoi_spec(uint8_t ir, uint16_t base) {
-    i8259A_ocw2(i8259A_SEOI | i8259A_SEOI | i8259A_OCW2_IR(ir), base);
-}
-
-static inline void i8259A_eoi_nonspec(uint16_t base) {
-    i8259A_ocw2(i8259A_NEOI, base);
-}
-
-/* TODO: resume this! */
-static inline void i8259A_
-
-/* TODO: FINISH THIS DRIVER! BUFFER MODE AND SPECIAL MASK MODE DESCRIPTIONS
- * AND POSSIBLY INTERFACES HAVE TO BE ADDED STILL!!! */
-
-/* ##################
- * # MISCELLANEOUS: #
- * ################## */
-
-/* Sets the bottom priority level. */
-static inline void i8259A_setpr(uint8_t priority, uint16_t base) {
-    i8259A_ocw2(0xc7, i8259A_SETPR | i8259A_OCW2_IR(priority), base);
-}
-
-
-/* Some macro magic could probably shorten all these one-liners into one
- * "base" macro and other "instantiations" of that macro. But the current
- * way is just fine, except that you might get some kind of cancer when gawking
- * at your screen for too long.
- * TODO: maybe do what is said above and convert the lower functions to
- * those base macros and instantiations. */
-
-/* ##################
- * # ICW FUNCTIONS: #
- * ################## */
-
-/* Writes ICW1.
- *
- * Parameters:
- *
- * Return Value:
- * None. */
-static inline void i8259A_icw1(uint8_t mask, uint8_t icw1, uint16_t base) {
-    i8259A_out(i8259A_ICW1(icw1 & mask), base | i8259A_A0_ICW1);
-}
-
-/* Writes ICW2.
- *
- * Parameters:
- *
- * Return Value:
- * None. */
-static inline void i8259A_icw2(uint8_t icw2, uint16_t base) {
-    i8259A_out(i8259A_ICW2(icw2), base | i8259A_A0_ICW2);
-}
-
-
-/* Writes ICW3.
- *
- * Parameters:
- *
- * Return Value:
- * None. */
-static inline void i8259A_icw3(uint8_t icw3, uint16_t base) {
-    i8259A_out(i8259A_ICW3(icw3), base | i8259A_A0_ICW3);
-}
-
-/* Writes ICW4.
- *
- * Parameters:
- *
- * Return Value:
- * None. */
-static inline void i8259A_icw4(uint8_t icw4, uint16_t base) {
-    i8259A_out(i8259A_ICW4(icw4), base | i8259A_A0_ICW4);
-}
-
-) /* __ASSEMBLER__,`1' */
 
 ) /* i8259A_H */
 
