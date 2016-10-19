@@ -1,4 +1,4 @@
-include(`include/drivers/isa/i8259A.h')
+include(`include/i8259A.h')
 
 .code16
 
