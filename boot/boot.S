@@ -1,4 +1,3 @@
-include(`boot.m4')
 include(`include/cmos.h')
 
 define(`BOOTSYS_C', `0x0')
