@@ -356,7 +356,9 @@ define(`i8042_sysreset',`
 	mov $i8042_WR_OUTP, %al
 	i8042_outcmd
 
-	/* 1's-complement with `~' because `i8042_SYSRESET == 0' means
+	/* TODO: add apopstrophe to 1s complement again when youve found
+	 * a way to not parse comments in quotes! */
+	/* 1s-complement with `~' because `i8042_SYSRESET == 0' means
 	 * reset, not `i8042_SYSRESET == 1' as with most other flags. */
 	mov ~$i8042_SYSRESET, %al
 	i8042_outdata
