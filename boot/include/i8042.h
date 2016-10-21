@@ -286,7 +286,7 @@ define(`i8042_PULSE_NO', `0x1')
 define(`i8042_IFT_CLOW', `0x1')
 
 /* Keyboard clock line stuck high. */
-define(`i8042_IFT_CHIGH`, `0x2')
+define(`i8042_IFT_CHIGH', `0x2')
 
 /* Keyboard data line stuck low. */
 define(`i8042_IFT_DLOW', `0x3')
