@@ -16,7 +16,7 @@ user_ints_tbl:
 SEC_TEXT(`.bootsys_text')
 /* TODO: should i make this a macro? */
 install_ints:
-	mov BOOTSYS_SEG, %ax
+	mov $BOOTSYS_SEG, %ax
 	mov %ax, %es
 	mov %ax, %ds
 	mov $user_ints_tbl, %si
