@@ -101,9 +101,9 @@ boot_start:
 	 * command does not have a time-out. */
 	xor %bp, %bp
 1:
-	mov $BOOTSYS_TEXT / 0x10, %ax
+	mov $BOOTSYS_SEG, %ax
 	mov %ax, %es
-	mov $BOOTSYS_TEXT % 0x10, %bx
+	xor %bx, %bx
 /* TODO: add rounding up here for bootsys_size! */
 	mov $0x200 | (BOOTSYS_SIZE / 0x200), %ax
 	mov $(BOOTSYS_C << 0x8) | BOOTSYS_S, %cx
@@ -120,7 +120,7 @@ boot_start:
 
 /* TODO: verify at preprocessing time that bootsys_seg:bootsys_off is aligned
  * on word oundaries! */
-ljmp $BOOTSYS_TEXT / 0x10, $BOOTSYS_TEXT % 0x10
+ljmp $BOOTSYS_SEG, $0x0
 
 /* TODO: change that to something more sophisticated later! */
 no_32b:
