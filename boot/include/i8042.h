@@ -266,7 +266,7 @@ define(`i8042_DATA_IN', `0x1')
 
 /* Clears bits 0 - 3 of the output port for roughly 6 microsecs by indication
  * in the four least significant bits of the command. */
-define(`i8042_PULSE_PREFIX 0xf0
+define(`i8042_PULSE_PREFIX', 0xf0')
 
 /* #################
  * # AFFIRM PULSE: #
