@@ -1,7 +1,5 @@
 include(`include/i8259A.h')
 
-.code16
-
 .global bootsys_start
 
 SEC_RW_DATA(`.bootsys_data')

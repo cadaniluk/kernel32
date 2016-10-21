@@ -35,8 +35,6 @@ define(`VID_ATTR', `0xf')
  */
 
 
-.code16
-
 .global boot_start
 
 .data
