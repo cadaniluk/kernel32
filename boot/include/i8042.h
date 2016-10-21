@@ -46,10 +46,6 @@
 ifdef(`i8042_H',,
 define(`i8042_H')
 
-include(`types.h')
-include(`io.h')
-
-
 /* ###############################################
  * # I/O PORTS OCCUPIED BY INTEL 8042 REGISTERS: #
  * ############################################### */
@@ -307,10 +303,6 @@ define(`i8042_IFT_DHIGH', `0x4')
  * ########################################################################## */
 
 
-
-
-ifelse(__ASSEMBLER__,`1',
-
 /* Disables the Intel 8042. */
 define(`i8042_disable',`
 	push %ax
@@ -453,7 +445,5 @@ define(`i8042_waitout_int',`
 	hlt
 	popf
 ')
-
-') /* __ASSEMBLER__,`1' */
 
 ) /* i8042_H */
