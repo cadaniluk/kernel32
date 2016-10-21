@@ -1,4 +1,4 @@
-#include <drivers/isa/i8042.h>
+include(`include/i8042.h')
 
 .global i8042_init
 /*.global i8042_destroy*/

@@ -1,10 +1,10 @@
-#include <drivers/isa/i8259A.h>
+include(`include/i8259A.h')
 
 .global i8259A_init
 /*.global i8259A_destroy*/ /* TODO: add if necessary! */
 
-define (`def_i8259A',
-`.global i8259A$1_rd_reg
+define(`def_i8259A',
+.global i8259A$1_rd_reg
 
 .global i8259A$1_buf_icw1
 .global i8259A$1_buf_icw2
@@ -24,7 +24,8 @@ define (`def_i8259A',
 
 .comm i8259A$1_buf_ocw1 1
 .comm i8259A$1_buf_ocw2 1
-.comm i8259A$1_buf_ocw3 1')
+.comm i8259A$1_buf_ocw3 1
+)
 
 .data
 /**/
