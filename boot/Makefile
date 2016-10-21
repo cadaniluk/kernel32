@@ -7,7 +7,7 @@ ROOT = ..
 
 M4 = m4
 M4PATH = "include/:$(ROOT)/"
-M4FILES = $(ROOT)/m4/global.m4 boot.m4
+M4FILES = $(ROOT)/m4/global.m4 m4/boot.m4
 
 ASFLAGS += --32 -g
 LDFLAGS += -melf_i386
@@ -15,7 +15,7 @@ LDFLAGS += -melf_i386
 # TODO: maybe add a variable for m4/asm.m4 and m4/c.m4 like m4/global.m4
 
 %.o: %.S
-	$(M4) $(M4FILES) $(ROOT)/m4/asm.m4 $< $(M4FLAGS) | \
+	$(M4) $(M4FILES) m4/asm.m4 $(ROOT)/m4/asm.m4 $< $(M4FLAGS) | \
 	$(AS) -o $@ $(ASFLAGS)
 
 %.ld.m4: %.ld
