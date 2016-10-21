@@ -43,7 +43,7 @@
  * that the output buffer is full implies that the system has not read
  * the buffer yet. */
 
-ifdef(`i8042_H',,`
+ifdef(`i8042_H',,
 define(`i8042_H')
 
 include(`types.h')
@@ -456,4 +456,4 @@ define(`i8042_waitout_int',`
 
 ') /* __ASSEMBLER__,`1' */
 
-') /* i8042_H */
+) /* i8042_H */
