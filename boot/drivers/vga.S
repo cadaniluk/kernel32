@@ -2,7 +2,7 @@
 
 .global vga_entry
 
-.section boot_data
+SEC_RW_DATA(`.bootsys_data')
 
-.section boot_text
+SEC_TEXT(`.bootsys_text')
 vga_entry:
