@@ -71,7 +71,7 @@ define(`i8042_DATA', `0x60')
 
 /* 0 - Output buffer is empty.
  * 1 - Output buffer is full. */
-define(`i8042_STAT_OUTFULL' `0x1')
+define(`i8042_STAT_OUTFULL', `0x1')
 
 /* 0 - Input buffer is empty.
  * 1 - Input buffer is full. */
@@ -124,7 +124,7 @@ define(`i8042_WR_CMD', `0x60')
 
 /* 0 - Do not generate an interrupt when output buffer is full.
  * 1 - Generate interrupt when output buffer is full. */
-define(`i8042_INT', `0x1')
+define(`i8042_CMD_INT', `0x1')
 
 /* 0 - Write 0 to aforementioned system flag bit of status register.
  * 1 - Write 1 to aforementioned system flag bit of status register. */
@@ -140,13 +140,13 @@ define(`i8042_CMD_DISABLE', `0x10')
 
 /* 0 - Disable IBM PC mode.
  * 1 - Enable IBM PC mode. */
-define(`i8042_PCMODE', `0x20')
+define(`i8042_CMD_PCMODE', `0x20')
 /* IBM PC mode denotes the IBM PC keyboard interface. In that mode, no
  * parity-checking is performed and no scan codes are converted. */
 
 /* 0 - Disable IBM PC compatibility mode.
  * 1 - Enable IBM PC compatibility mode. */
-define(`i8042_PC_COMPAT', `0x40')
+define(`i8042_CMD_PC_COMPAT', `0x40')
 /* IBM PC compatibility mode enables conversion from the scancodes received
  * from the keyboard to the former IBM PC scancodes. */
 
@@ -294,158 +294,9 @@ define(`i8042_IFT_DLOW', `0x3')
 /* Keyboard data line stuck high. */
 define(`i8042_IFT_DHIGH', `0x4')
 
-
-/* ########################################################################## 
- * Now, that was all the low-level stuff of the controller. What follows up
- * is the abstraction from that. It ranges from "still severely low-level" to
- * "rather high-level" and thus can be accessed from different abstraction
- * levels to interact with the controller in the most efficient way.
- * ########################################################################## */
-
-
-/* Disables the Intel 8042. */
-define(`i8042_disable',`
-	push %ax
-	mov $i8042_DISABLE, %al
-	i8042_outcmd
-	pop %ax
-')
-
-/* Enables the Intel 8042. */
-define(`i8042_enable',`
-	push %ax
-	mov $i8042_ENABLE, %al
-	i8042_outcmd
-	pop %ax
-')
-
-/* Performs a self-test on the Intel 8042. */
-define(`i8042_selftest',`
-	mov $i8042_SELFTEST, %al
-	i8042_outcmd
-	i8042_indata
-')
-
-/* Performs an interface test on the Intel 8042. For more information,
- * see the IBM 5170 Technical Reference. */  
-define(`i8042_iftest',`
-	mov $i8042_IFTEST, %al
-	i8042_outcmd
-	i8042_indata
-')
-
-/* Disables A20.*/  
-define(`i8042_disablea20',`
-	i8042_rdoutp
-	and ~$i8042_A20, %al
-	i8042_wroutp
-')
-
-/* Enables A20. */
-define(`i8042_enablea20',`
-	i8042_rdoutp
-	or $i8042_A20, %al
-	i8042_wroutp
-')
-
-/* Resets the whole system. */
-define(`i8042_sysreset',`
-	/* No need for any data preservation - the system will be
-	 * reset anyway. */
-
-	mov $i8042_WR_OUTP, %al
-	i8042_outcmd
-
-	/* TODO: add apopstrophe to 1s complement again when youve found
-	 * a way to not parse comments in quotes! */
-	/* 1s-complement with `~' because `i8042_SYSRESET == 0' means
-	 * reset, not `i8042_SYSRESET == 1' as with most other flags. */
-	mov ~$i8042_SYSRESET, %al
-	i8042_outdata
-
-	/* TODO: replace with something better, look at
-	 * /include/drivers/i8042.h. */
-	cli
-	hlt
-')
-
-/* Sets the content of the command byte. */
-define(`i8042_setcmdbyte',`
-	push %ax
-
-	xchg %ah, %al
-	mov $i8042_WR_CMD, %al
-	i8042_outcmd
-
-	xchg %ah, %al
-	i8042_outdata
-
-	pop %ax
-')
-
-/* Returns the command byte. */
-define(`i8042_cmdbyte',`
-	mov $i8042_RD_CMD, %al
-	i8042_outcmd
-
-	i8042_indata
-')
-
-/* Reads from the input port. */ 
-define(`i8042_rdinp',`
-	mov $i8042_RD_INP, %al
-	i8042_outcmd
-
-	i8042_indata
-')
-
-/* Reads from the output port. */
-define(`i8042_rdoutp',`
-	mov $i8042_RD_OUTP, %al
-	i8042_outcmd
-
-	i8042_indata
-')
-
-/* Writes to the output port. */
-define(`i8042_wroutp',`
-	push %ax
-
-	xchg %ah, %al
-	mov $i8042_WR_OUTP, %al
-	i8042_outcmd
-
-	xchg %ah, %al
-	i8042_outdata
-
-	pop %ax
-')
-
-define(`i8042_waitin',` 
-1:
-	i8042_instat
-	test $i8042_STAT_INEMPTY, %al
-	jnz 1f
-	pause
-	jmp 1b
-1:
-')
-
-define(`i8042_waitout',`
-1:
-	i8042_instat
-	test $i8042_STAT_OUTFULL, %al
-	jnz 1f
-	pause
-	jmp 1b
-1:
-')
-
-define(`i8042_waitout_int',`
-	pushf
-	sti
-	hlt
-	popf
-')
+/* Error codes for `i8042_init'. */
+define(`i8042_E_NOERR', `0x0')
+define(`i8042_E_IFTEST', `0x1')
+define(`i8042_E_SELFTEST', `0x2')
 
 ) /* i8042_H */
