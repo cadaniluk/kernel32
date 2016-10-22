@@ -3,6 +3,7 @@ include(`include/i8042.h')
 .global i8042_init
 /*.global i8042_destroy*/
 
+SEC_TEXT(`.bootsys_text')
 i8042_init:
 	/* Disables, so the initialization will not be disrupted. */
 	i8042_disable
