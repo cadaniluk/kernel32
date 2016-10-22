@@ -3,7 +3,7 @@ ENTRY(boot_start)
 
 MEMORY {
 	boot : org = BOOT_TEXT, len = BOOT_SIZE
-	bootsys : org = BOOTSYS_SEG * 0x10, len = BOOTSYS_SIZE
+	bootsys : org = 0x0, len = BOOTSYS_SIZE
 }
 
 
