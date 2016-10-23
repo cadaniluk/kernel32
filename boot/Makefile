@@ -22,8 +22,8 @@ LDFLAGS += -melf_i386
 	$(M4) $(M4FILES) $< $(M4FLAGS) > $@
 
 
-boot_objs = main.o boot.o floppy_errs.o install_ints.o drivers/i8259A.o \
-drivers/i8042.o drivers/vga.o # cmos.o apm.o
+boot_objs = main.o boot.o floppy_errs.o drivers/i8259A.o drivers/i8042.o \
+drivers/vga.o # cmos.o apm.o
 
 # TODO: merge run and debug targets and decide to debug or not using the dbg
 # parameter.
