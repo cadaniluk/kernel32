@@ -7,10 +7,10 @@
 SHELL = /bin/bash
 
 %.sym: %.out
+	objcopy --strip-debug --strip-unneeded $<
 	objcopy --only-keep-debug $< $@
 
 %.img: %.out
-	objcopy --strip-debug --strip-unneeded $<
 	objcopy -O binary $< $@
 
 %.out:
