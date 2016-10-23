@@ -4,6 +4,10 @@ define(`BOOTSYS_C', `0x0')
 define(`BOOTSYS_H', `0x0')
 define(`BOOTSYS_S', `0x2')
 define(`FLOPPY_DRV', `0x0')
+/* TODO: find correlation between bootsys_sectors and bootsys_size!
+ * maybe just change bootsys_size to something smaller still < 64 kib, so
+ * we can load as much sectors */
+define(`BOOTSYS_SECTORS', `0x3')
 
 define(`BOOT_SS', `0x50') /* right after BDA */
 define(`BOOT_SP', `0x76fe') /* word-aligned, right before bootloader */
@@ -103,7 +107,7 @@ boot_start:
 	mov %ax, %es
 	xor %bx, %bx
 /* TODO: add rounding up here for bootsys_size! */
-	mov $0x200 | (BOOTSYS_SIZE / 0x200), %ax
+	mov $0x200 | BOOTSYS_SECTORS, %ax
 	mov $(BOOTSYS_C << 0x8) | BOOTSYS_S, %cx
 	mov $(BOOTSYS_H << 0x8) | FLOPPY_DRV, %dx 
 	int $0x13
@@ -160,5 +164,7 @@ puts:
 reboot:
 	mov $press_key, %si
 	call puts
+
+	/* TODO: add key reading function here! */
 
 	ljmp $0xf000, $0xfff0
