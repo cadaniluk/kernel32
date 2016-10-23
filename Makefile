@@ -23,9 +23,9 @@ boot_debug: boot.sym boot.img
 	qemu-system-i386 -fda boot.img -s -S &
 	gdb -x dbg.gdb
 
-all: boot.sym boot.img #kernel.img kernel.sym
+all: boot.img #kernel.img kernel.sym
 
-boot.sym boot.img: boot.out
+boot.img: boot.out
 
 kernel.sym kernel.img: kernel.out
 
