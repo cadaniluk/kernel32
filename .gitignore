@@ -3,3 +3,4 @@
 *.sym # debug symbol files
 *.out # temporary executables
 *.img # binary images
+bochsout.txt # bochs log file
