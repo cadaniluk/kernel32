@@ -33,7 +33,7 @@ kernel.sym kernel.img: kernel.out
 clean:
 	make -C boot clean
 	make -C kernel clean
-	rm -f *.out *.img *.sym
+	rm -f *.out *.img *.sym bochsout.txt
 
 
 .PHONY: boot_debug all clean
