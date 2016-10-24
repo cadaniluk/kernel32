@@ -7,11 +7,13 @@
 SHELL = /bin/bash
 
 %.sym: %.out
-	objcopy --strip-debug --strip-unneeded $<
 	objcopy --only-keep-debug $< $@
 
 %.img: %.out
-	objcopy -O binary $< $@
+	cp $< tmp.out
+	objcopy --strip-debug --strip-unneeded tmp.out
+	objcopy -O binary tmp.out $@
+	rm tmp.out
 
 %.out:
 	make -C $* all
@@ -23,12 +25,11 @@ boot_debug: boot.sym boot.img
 	qemu-system-i386 -fda boot.img -s -S &
 	gdb -x dbg.gdb
 
-all: boot.img #kernel.img kernel.sym
+all: boot.img kernel.img kernel.sym
 
 boot.img: boot.out
 
 kernel.sym kernel.img: kernel.out
-
 
 clean:
 	make -C boot clean
