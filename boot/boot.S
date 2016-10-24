@@ -141,7 +141,7 @@ puts:
 	push %ax
 	push %es
 
-	mov $NUM_COLS, %al
+	mov $NUM_COLS * 0x2, %al /* `* 0x2' for char + attr */
 	mulb curr_line
 	mov %ax, %di
 	incb curr_line
