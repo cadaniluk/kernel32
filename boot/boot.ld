@@ -1,4 +1,3 @@
-OUTPUT(../boot.out)
 ENTRY(boot_start)
 
 MEMORY {

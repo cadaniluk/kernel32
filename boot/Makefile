@@ -1,7 +1,3 @@
-# Parameters passed to GNU make.
-# `dbg=y|n': decides whether debugging mode is on or not.
-# TODO: implement these parameters
-
 SHELL = /bin/bash
 ROOT = ..
 
@@ -11,8 +7,6 @@ M4FILES = $(ROOT)/m4/global.m4 m4/boot.m4
 
 ASFLAGS += --32 -g
 LDFLAGS += -melf_i386
-
-# TODO: maybe add a variable for m4/asm.m4 and m4/c.m4 like m4/global.m4
 
 %.o: %.S
 	$(M4) $(M4FILES) m4/asm.m4 $(ROOT)/m4/asm.m4 $< $(M4FLAGS) | \
@@ -31,7 +25,7 @@ drivers/vga.o # cmos.o apm.o
 all: $(ROOT)/boot.out
 
 $(ROOT)/boot.out: $(boot_objs) boot.ld.m4
-	$(LD) -T boot.ld.m4 $(boot_objs) $(LDFLAGS)
+	$(LD) -T boot.ld.m4 $(boot_objs) $(LDFLAGS) -o $@
 
 clean:
 	rm -f $(boot_objs) *.ld.m4
