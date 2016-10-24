@@ -1,8 +1,11 @@
-OUTPUT(kernel.out)
 ENTRY(kernel_start)
 
+MEMORY {
+	kernel : org = KERNEL_ORG, len = KERNEL_SIZE
+}
+
 SECTIONS {
-    .text : { *(.text) }
-    .data : { *(.data) }
-    .bss : { *(.bss) }
+    .text : { *(.text) } > kernel
+    .data : { *(.data) } > kernel
+    .bss : { *(.bss) } > kernel
 }
