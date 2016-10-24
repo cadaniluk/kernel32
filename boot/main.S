@@ -13,16 +13,18 @@ define(`USER_INT_START', `0x20') /* first usable interrupt */
 .global bootsys_start
 
 SEC_RW_DATA(`.bootsys_data')
-.balign 2
+/* TODO: alignment directives commented out due to issue #12. resolve that! */
+/*.balign 2*/
 user_ints_tbl:
 .word vga_entry
+/*.balign 1*/
 
-.balign 1
 .set num_user_ints, (. - user_ints_tbl) / 0x2
 
 SEC_TEXT(`.bootsys_text')
 bootsys_start:
-        /* From `BOOTSYS_SEG:$user_ints_tbl' to `0x0:$USER_INT_START * 0x4' */
+	/* Install user-defined interrupts. */
+
         xor %ax, %ax
         mov %ax, %es
         mov $USER_INT_START * 0x4, %di
@@ -33,8 +35,8 @@ bootsys_start:
 1:
         test %cx, %cx
         jz 2f
-        movsw /* offset */
-        stosw /* segment (offset first due to little-endian) */
+        movsw
+        stosw
         dec %cx
         jmp 1b
 2:
