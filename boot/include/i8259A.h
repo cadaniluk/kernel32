@@ -112,10 +112,6 @@ define(`i8259A_H')
  * # COMMON I/O PORTS: #
  * ##################### */
 
-/* Master PIC base I/O port. */
-define(`i8259A_MBASE', `0x20')
-
-
 /* None of the original IBM PCs had more than two PICs but I don't think
  * it's prohibited to have more on an x86 machine. Therefore, I wrote the
  * driver to be compliant for an arbitrary number of PICs, without being
@@ -126,8 +122,8 @@ define(`i8259A_MBASE', `0x20')
  * # ICW1: #
  * ######### */
 
-define(`i8259A_ICW1', `(0x10 | ($1))')
-define(`i8259A_ICW1_ADDR', `($1)')
+define(`i8259A_ICW1', `$1 | 0x10')
+define(`i8259A_ICW1_ADDR', `$1')
 
 /* For the difference between edge-triggered and level-triggered modes, view
  * this link:
@@ -168,22 +164,24 @@ define(`i8259A_IC4', `0x1')
 /* Generates ICW2. `base' contains bits 3 - 7 of the interrupt vector (IV) of
  * the interrupt requests (IR). The code of the IR (0 - 7) consumes bits 0 - 2.
  * `base' and the code constitute the IV. */
-define(`i8259A_ICW2', `(($1) << 0x3)')
-define(`i8259A_ICW2_ADDR', `(($1) | 0x1)')
+/* TODO: originally, the i8259A_ICW2 macro was `$1 << 0x3'. is the shift correct
+ * here? i removed it because i dont think it is... */
+define(`i8259A_ICW2', `$1')
+define(`i8259A_ICW2_ADDR', `$1 | 0x1')
 
 /* #########
  * # ICW3: #
  * ######### */
 
-define(`i8259A_ICW3', `($1)')
-define(`i8259A_ICW3_ADDR', `(($1) | 0x1)')
+define(`i8259A_ICW3', `$1')
+define(`i8259A_ICW3_ADDR', `$1 | 0x1')
 
 /* #########
  * # ICW4: #
  * ######### */
 
-define(`i8259A_ICW4', `($1)')
-define(`i8259A_A0_ICW4', `(($1) | 0x1)')
+define(`i8259A_ICW4', `$1')
+define(`i8259A_ICW4_ADDR', `$1 | 0x1')
 
 /* 0 - special fully nested mode
  * 1 - not special fully nested mode */
@@ -212,6 +210,8 @@ define(`i8259A_AEOI', `0x2')
 /* 0 - Intel MCS processor used.
  * 1 - x86 processor used. */
 define(`i8259A_uPM', `0x1')
+define(`i8259A_MCS', `0x0')
+define(`i8259A_x86', `0x1')
 
 /* #########
  * # OCW1: #
@@ -220,8 +220,8 @@ define(`i8259A_uPM', `0x1')
 /* OCW1 accesses the IMR. Set bit means "masked off" or "IR line disabled,"
  * cleared bit means "IR line enabled." */
 
-define(`i8259A_OCW1', `($1)') /* for consistency's sake */
-define(`i8259A_OCW1_ADDR', `(($1) | 0x1)')
+define(`i8259A_OCW1', `$1') /* for consistency's sake */
+define(`i8259A_OCW1_ADDR', `$1 | 0x1')
 
 /* #########
  * # OCW2: #
@@ -231,12 +231,12 @@ define(`i8259A_OCW1_ADDR', `(($1) | 0x1)')
  * consistency; is it still consistency if the stubs for consistency
  * constitute the majority of overall functions? I don't think so but
  * this file hasn't reached this vast extent (yet). */
-define(`i8259A_OCW2', `($1)')
-define(`i8259A_OCW2_ADDR', `($1)')
+define(`i8259A_OCW2', `$1')
+define(`i8259A_OCW2_ADDR', `$1')
 
 /* An IR level encoded in bits `0' - `2' in OCW2. Used only with certain
  * commands. */
-define(`i8259A_OCW2_IR', `($1)')
+define(`i8259A_OCW2_IR', `$1')
 
 /* Non-specific EOI command.
  * Clears the current highest priority interrupt level since, in fully
@@ -279,8 +279,8 @@ define(`i8259A_NOP', `0x40')
  * # OCW3: #
  * ######### */
 
-define(`i8259A_OCW3', `(($1) | 0x8)')
-define(`i8259A_OCW3_ADDR', `($1)')
+define(`i8259A_OCW3', `$1 | 0x8')
+define(`i8259A_OCW3_ADDR', `$1')
 
 /* Notice something? While I wrote the single commands of OCW2 as macros,
  * I wrote the single bits of OCW3. That's simply because the manual did
