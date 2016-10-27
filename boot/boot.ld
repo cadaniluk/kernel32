@@ -14,6 +14,9 @@ SECTIONS {
 	.bootsys_text : AT(BOOT_ORG + BOOT_LEN) { *(.bootsys_text) } > bootsys
 	.bootsys_data : AT(LOADADDR(.bootsys_text) + SIZEOF(.bootsys_text)) {
 	*(.bootsys_data) } > bootsys
+	.bootsys_bss : AT(LOADADDR(.bootsys_data) + SIZEOF(.bootsys_data)) {
+	*(.bootsys_bss) } > bootsys
 }
 
-/* TODO: is the at command for bootsys_data really necessary? */
+/* TODO: is the at command for bootsys_data and _bss really necessary? */
+
