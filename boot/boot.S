@@ -9,8 +9,11 @@ define(`FLOPPY_DRV', `0x0')
  * we can load as much sectors */
 define(`BOOTSYS_SECTORS', `0x3')
 
+/* TODO: i dont like how boot_start is subtracted by 2 here. its intended to
+ * serve word-alignment, but thats way too hardcoded. find something more
+ * flexible to achieve the same thing. */
 define(`BOOT_SS', `0x50') /* right after BDA */
-define(`BOOT_SP', `0x76fe') /* word-aligned, right before bootloader */
+define(`BOOT_SP', `(BOOT_ORG - 0x2 - BOOT_SS * 0x10)')
 
 /* TODO: optimize the whole code! not by using subtle and hard-to-
  * detect micro-optimizations but using calls to functions,
