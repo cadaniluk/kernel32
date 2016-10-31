@@ -46,13 +46,13 @@ define(`__UTIL_ARGC', `$#')
 define(`__UTIL_CHECK_STRUCT_ARGS',
 `ifelse(eval(__UTIL_ARGC(shift($@))` % $1'), `0', `1', `0')')
 
-/* Helper function for `UTIL_DEF_UNINIT'. Does the actual enumeration of data.
+/* Helper function for `UTIL_DEF'. Does the actual enumeration of data.
  *
  * Parameters:
  * `$n' - Data fields to define. */
-define(`__UTIL_DEF_UNINIT',
+define(`__UTIL_DEF',
 ``.comm util_'ID`.$1, $2'
-ifelse(`$#', `2', , `__UTIL_DEF_UNINIT(shift(shift($@)))')') 
+ifelse(`$#', `2', , `__UTIL_DEF(shift(shift($@)))')') 
 
 /* Defines a data structure with multiple member fields, which are all
  * uninitialized (GNU as `.comm' directive).
@@ -64,17 +64,17 @@ ifelse(`$#', `2', , `__UTIL_DEF_UNINIT(shift(shift($@)))')')
  *
  * Notes:
  * You can also just pass an identifier as `$1' and pass a macro defined
-* using `UTIL_DEFSTRUCT_UNINIT'. */
-define(`UTIL_DEF_UNINIT',
+* using `UTIL_DEFSTRUCT'. */
+define(`UTIL_DEF',
 `ifelse(eval(`$# < 1'), 1, `UTIL_FATAL(`identifier missing')')
 ifelse(__UTIL_CHECK_STRUCT_ARGS(`2', shift($@)), `0', UTIL_FATAL(dnl
 `data size missing'))
 pushdef(`ID', `$1')
-__UTIL_DEF_UNINIT(shift($@))
+__UTIL_DEF(shift($@))
 popdef(`ID')')
 
 /* Defines an uninitialized structure. Technically, it just generates an
- * argument list, which can be passed to `UTIL_DEF_UNINIT'.
+ * argument list, which can be passed to `UTIL_DEF'.
  *
  * Parameters:
  * `$1' - The name of the structure.
@@ -83,7 +83,7 @@ popdef(`ID')')
  * corresponding variable in bytes, and the list is continued with successive
  * pairs of identifiers and length values. In conclusion, `$#' must be a
  * multiple of `2', otherwise the macro exits with an error. */
-define(`UTIL_DEFSTRUCT_UNINIT',
+define(`UTIL_DEFSTRUCT',
 `ifelse(__UTIL_CHECK_STRUCT_ARGS(`2', shift($@)), `0', UTIL_FATAL(dnl
 `data size missing'))
 define(`$1', `shift($@)')')
