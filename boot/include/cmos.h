@@ -3,15 +3,6 @@
  * a tad bit prettier. THIS GOES FOR EVERY FILE IN THIS PROJECT.
  * MAKE ALL COMMENTS LOOK PRETTIER. */
 
-/* Sources: 
- * http://www.bioscentral.com/misc/cmosmap.htm
- * TODO: don't leave this source here! move it to the SOURCES
- * file and replace this here with the apporpriate id number!
- * The IBM 5170 (PC AT) Technical reference has also been used
- * as a source. Replace this here with the id number from
- * SOURCES for that reference!
- */
-
 /* This file contains CMOS definitions for the IBM PC AT in its original
  * version. More modern CMOS definitions are not included here. Add them
  * manually with a NEW file (DO NOT edit this one) or leave it. I am not

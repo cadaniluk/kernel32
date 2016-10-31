@@ -1,7 +1,5 @@
 ifdef(`uPD765_H', , `define(`uPD765_H')
 
-/* Sources: TODO: add sources! */
-
 /* TODO: How to handle multi-bit fields? with a bit mask or simply provide
  * possible values? example: drive selection. */
 
