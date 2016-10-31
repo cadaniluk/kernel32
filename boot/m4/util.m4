@@ -14,8 +14,7 @@ define(`UTIL_M4')
  * Notes:
  * You should NOT rely on this function actually exiting m4 because I think it
  * improves the quality and stability of the code. */
-define(`UTIL_FATAL', `errprint(__program__:__file__:__line__:` $*
-')')
+define(`UTIL_FATAL', `errprint(__program__:__file__:__line__:` $*')')
 
 /* Emits a warning message.
  *
@@ -41,8 +40,8 @@ define(`__UTIL_ARGC', `$#')
  *
  * Parameters:
  * `$1' - `n'.
- * The other arguments are arbitrary and their values irrelevant to
- * the functioning of this macro. Their presence is crucial, though. */
+ * The other values irrelevant to the functioning of this macro. Their presence
+ * is crucial, though. */
 define(`__UTIL_CHECK_STRUCT_ARGS',
 `ifelse(eval(__UTIL_ARGC(shift($@))` % $1'), `0', `1', `0')')
 
