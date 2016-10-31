@@ -35,7 +35,7 @@ define(`UTIL_WARN', `errprint(__program__:__file__:__line:` $*')')
  * `$1' - The name of the structure, which contains the data field.
  * `$2' - The name of the data field.
  */
-define(`UTIL_MEMBER', `util_`$1'.`$2'')
+define(`UTIL_MEMBER', `__util_`$1'.`$2'')
 
 /*
  * Emits the number of arguments.
@@ -64,7 +64,7 @@ define(`__UTIL_CHECK_STRUCT_ARGS',
  * `$n' - Data fields to define.
  */
 define(`__UTIL_DEF',
-``.comm util_'ID`.$1, $2'
+``.comm __util_'ID`.$1, $2'
 ifelse(`$#', `2', , `__UTIL_DEF(shift(shift($@)))')') 
 
 /*
@@ -115,7 +115,7 @@ define(`$1', `shift($@)')')
  * `$n' - Data fields to define.
  */
 define(`__UTIL_DEF_INIT',
-``util_'ID`.$1: .$2 $3'
+``__util_'ID`.$1: .$2 $3'
 ifelse(`$#', `3', , `__UTIL_DEF_INIT(shift(shift(shift($@)))')')
 
 /*
