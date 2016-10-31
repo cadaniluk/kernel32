@@ -64,7 +64,7 @@ ifelse(`$#', `2', , `__UTIL_DEF(shift(shift($@)))')')
  *
  * Notes:
  * You can also just pass an identifier as `$1' and pass a macro defined
-* using `UTIL_DEFSTRUCT'. */
+ * using `UTIL_STRUCT'. */
 define(`UTIL_DEF',
 `ifelse(eval(`$# < 1'), 1, `UTIL_FATAL(`identifier missing')')
 ifelse(__UTIL_CHECK_STRUCT_ARGS(`2', shift($@)), `0', UTIL_FATAL(dnl
@@ -83,7 +83,7 @@ popdef(`ID')')
  * corresponding variable in bytes, and the list is continued with successive
  * pairs of identifiers and length values. In conclusion, `$#' must be a
  * multiple of `2', otherwise the macro exits with an error. */
-define(`UTIL_DEFSTRUCT',
+define(`UTIL_STRUCT',
 `ifelse(__UTIL_CHECK_STRUCT_ARGS(`2', shift($@)), `0', UTIL_FATAL(dnl
 `data size missing'))
 define(`$1', `shift($@)')')
@@ -126,7 +126,7 @@ popdef(`ID')',
  * the third the value of the field, and the list is continued with successive
  * triples of identifiers, data types, and initialization values. In conclusion,
  * `$#' must be a multiple of `3', otherwise the macro exits with an error. */
-define(`UTIL_DEFSTRUCT_INIT',
+define(`UTIL_STRUCT_INIT',
 `ifelse(__UTIL_CHECK_STRUCT_ARGS(`3', shift($@)), `1', `define(`$1',
 `shift($@)')', `UTIL_FATAL(`data type and/or initialization value missing')')')
 
