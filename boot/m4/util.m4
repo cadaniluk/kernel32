@@ -16,7 +16,6 @@ define(`UTIL_H')
  * improves the quality and stability of the code. */
 define(`UTIL_FATAL', `errprint(__program__:__file__:__line__:` $*
 ')')
-m4exit(`1')')
 
 /* Emits a warning message.
  *
@@ -136,8 +135,4 @@ define(`UTIL_DEFSTRUCT_INIT',
  * with values! currently defstruct takes over initialization, which
  * actually makes no sense. */
 
-traceon(`UTIL_DEFSTRUCT_INIT')
-UTIL_DEFSTRUCT_INIT(`struct', `mem1', `byte', `0x1', `mem2', `int', `0xfe')
-UTIL_DEF_INIT(`name', struct)
-
-')
+)
