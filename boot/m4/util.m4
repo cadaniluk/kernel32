@@ -1,5 +1,5 @@
-ifdef(`UTIL_H', ,
-define(`UTIL_H')
+ifdef(`UTIL_M4', ,
+define(`UTIL_M4')
 
 /* My first GNU m4 file. The code is probably not perfect because of my
  * lack of experience and skill with m4 but that will improve. */
