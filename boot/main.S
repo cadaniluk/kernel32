@@ -1,4 +1,5 @@
 include(`include/i8259A.h')
+include(`include/mm_detect.h')
 
 define(`USER_INT_START', `0x20') /* first usable interrupt */
 define(`i8259A_MASTER', `0x20')
@@ -29,6 +30,9 @@ bootsys_start:
 	mov i8259A_ICW4($i8259A_uPM & i8259A_x86), %al
 	out %al, i8259A_ICW4_ADDR($i8259A_MASTER)
 	out %al, i8259A_ICW4_ADDR($i8259A_SLAVE)
+
+	call mm_detect
+	
 
 	cli
 	hlt
