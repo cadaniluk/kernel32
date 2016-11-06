@@ -16,7 +16,7 @@ mm_detect:
 	mov $E820_SMAP, %edx
 	xor %si, %si /* cx used, so this is our counter register */
 1:
-	cmp %si, $E820_MAX_ENTRIES
+	cmp $E820_MAX_ENTRIES, %si
 	je 2f
 	/* TODO: add some indicator in the return value that the max entry
 	 * number has been reached. */
