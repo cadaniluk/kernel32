@@ -7,7 +7,10 @@ mm_map:
 .space E820_ENTRY_LEN * E820_MAX_ENTRIES
 
 SEC_TEXT(`.bootsys_text')
-/* returns a pointer to the memory map */
+/*
+ * ax - error code
+ * bx - pointer to the memory map
+ */
 mm_detect:
 	mov $BOOTSYS_SEG, %ax
 	mov %ax, %es
@@ -18,20 +21,26 @@ mm_detect:
 1:
 	cmp $E820_MAX_ENTRIES, %si
 	je 2f
-	/* TODO: add some indicator in the return value that the max entry
-	 * number has been reached. */
 
 	mov $0xe820, %eax
 	mov $E820_ENTRY_LEN, %ecx
 	int $0x15
 
-	jc 2f
+	jc 3f
 	test %ebx, %ebx
-	jz 2f
+	jz 3f
 	jmp 1b
 2:
-	mov $mm_map, %ax
+	mov $E820_TOO_MANY, %ax
+	jmp 4f
+3:
+	xor %ax, %ax
+4:
+	mov $mm_map, %bx
 	ret
 
 /* TODO: warn if e820_entry_len * e820_max_entries > register size */
 
+/* TODO: read arch/x86/boot/memory.c and do something equivalent to that.
+ * some bioses stop setting edx to SMAP during the loop i think or something
+ * similar... check that! */
