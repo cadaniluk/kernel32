@@ -36,6 +36,12 @@ curr_line: .byte 0x0
 
 .text
 boot_start:
+	/*
+	 * We do not need interrupts anywhere in the bootloader, so we
+	 * disable them right away.
+	 */
+	cli
+
 	/* Set up a basic stack. */
 	mov $BOOT_SS, %ax /* Stack segment points to right after the BDA */
 	mov %ax, %ss

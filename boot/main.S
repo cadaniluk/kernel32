@@ -11,7 +11,10 @@ SEC_RW_DATA(`.bootsys_data')
 
 SEC_TEXT(`.bootsys_text')
 bootsys_start:
-	/* Remap IRQs. */
+	/*
+	 * Remap IRQs. Interrupts have been disabled in the
+	 * bootloader already.
+	 */
 
 	mov i8259A_ICW1($i8259A_IC4), %al
 	out %al, i8259A_ICW1_ADDR($i8259A_MASTER)
@@ -33,6 +36,5 @@ bootsys_start:
 
 	call mm_detect
 	
-
 	cli
 	hlt
