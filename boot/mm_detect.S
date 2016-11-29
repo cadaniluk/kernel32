@@ -10,6 +10,9 @@ SEC_TEXT(`.bootsys_text')
 /*
  * ax - error code
  * bx - pointer to the memory map
+ * si - length of memory map
+ * TODO: maybe return the length of the memory map in cx to preserve the
+ * purpose of the counter register cx!
  */
 mm_detect:
 	mov $BOOTSYS_SEG, %ax
@@ -20,18 +23,21 @@ mm_detect:
 	xor %si, %si /* cx already in use, so this is our counter register */
 1:
 	cmp $E820_MAX_ENTRIES, %si /* if no. entries maxes out */
-	je 2f
+	je 3f
 
 	mov $0xe820, %eax
 	mov $E820_ENTRY_LEN, %ecx
 	int $0x15 /* obtain entry */
 
-	jc 3f /* some BIOSes terminate with cf = 0 */
+	jc 4f /* some BIOSes terminate with cf = 0 */
 	cmp $E820_SMAP, %eax
 	jne 2f /* if SMAP value not set properly */
 
 	test %ebx, %ebx
-	jz 3f /* ebx = 0x0 -> terminate entry list */
+	jz 4f /* ebx = 0x0 -> terminate entry list */
+
+	add $E820_ENTRY_LEN, %di
+	inc %si
 	jmp 1b
 2:
 	mov $E820_BAD_SMAP, %ax
@@ -46,7 +52,3 @@ mm_detect:
 	ret
 
 /* TODO: warn if e820_entry_len * e820_max_entries > register size */
-
-/* TODO: read arch/x86/boot/memory.c and do something equivalent to that.
- * some bioses stop setting edx to SMAP during the loop i think or something
- * similar... check that! */
