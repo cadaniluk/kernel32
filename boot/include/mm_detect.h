@@ -21,5 +21,6 @@ E820_TYPE_LEN) * E820_MAX_ENTRIES)')
 
 define(`E820_SUCCESS', `0x0') /* success (must be zero) */
 define(`E820_TOO_MANY', `0x1') /* too many entries */
+define(`E820_BAD_SMAP', `0x2') /* SMAP value not set properly */
 
 ) /* MM_DETECT_H */
