@@ -1,14 +1,7 @@
-The bootloader is loaded to physical address `0x7c00'. It does some stuff
-and loads the 16-bit boot system to the highest address possible, right under
-`0x90000', assuming the memory until `0x90000' is free (the EBDA starts
-somewhere around `0x9fc00', but it is not standardized, AFAIK). This way, the
-boot system has about 512 KiB free memory, which simply must suffice.
-Technically, we can do crazy stuff such as switching to Unreal Mode, which
-gives us a maximum of 4 GiB, but that should not be necessary.
-The boot system loads the kernel in turn to address `0x0'. It has free
-space until the start address of the boot system. Should this prove
-insufficient, we can either split the kernel in two parts, below and over
-1 MiB, or do it as Linux does, i.e., load the whole kernel over 1 MiB. This
-is actually the cleanest way I think, but I do not think the kernel is
-getting that big, so we can load the kernel in the first MiB and user
-programs above.
+The bootloader is loaded to physical address `0x7c00' by the BIOS.
+It loads the secondary bootloader in turn, which in turn loads the kernel.
+The secondary bootloader is loaded right below the EBDA, whose addresses is
+contained in the BDA and obtained from there by the primary bootloader.
+The kernel is located in the memory from `0x0' to the start of the secondary
+bootloader. Dynamic data structures can be allocated everywhere else, including
+high memory above 1 MiB.
