@@ -1,14 +1,5 @@
 include(`include/cmos.h')
 
-define(`BOOTSYS_C', `0x0')
-define(`BOOTSYS_H', `0x0')
-define(`BOOTSYS_S', `0x2')
-define(`FLOPPY_DRV', `0x0')
-/* TODO: find correlation between bootsys_sectors and bootsys_size!
- * maybe just change bootsys_size to something smaller still < 64 kib, so
- * we can load as much sectors */
-define(`BOOTSYS_SECTORS', `0x3')
-
 /* TODO: i dont like how boot_start is subtracted by 2 here. its intended to
  * serve word-alignment, but thats way too hardcoded. find something more
  * flexible to achieve the same thing. */
