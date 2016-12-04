@@ -1,7 +1,7 @@
 ENTRY(kernel_start)
 
 MEMORY {
-	kernel : org = KERNEL_ORG, len = KERNEL_LEN
+	kernel : org = KERNEL_ORG, len = KERNEL_MAX_LEN
 }
 
 SECTIONS {

@@ -23,11 +23,14 @@ tmp_gdt:
 /* TODO: choose alignment to have address mod 4 = 2 */
 .balign 2
 tmp_gdtr:
-.int BOOTSYS_ORG + tmp_gdt
+.int 0x0 /* to be initialized */
 .word 0x18 /* null, code, and data */
 
 SEC_TEXT(`.bootsys_text')
 bootsys_start:
+	mov %cs, %ax
+	mov %ax, %ds
+
 	/*
 	 * Remap IRQs. Interrupts have been disabled in the
 	 * bootloader already.
@@ -53,13 +56,12 @@ bootsys_start:
 
 	call mm_detect
 
-	/* The kernel is loaded now. */
+	/* Load the kernel now. */
 
 	xor %bp, %bp
 1:
 	mov $KERNEL_ORG >> 0x4, %ax
 	mov %ax, %es
-/* TODO: add rounding up here for kernel_len! */
 	mov $KERNEL_ORG & 0xf, %bx
 	mov $0x200 | KERNEL_SECTORS, %ax
 	mov $(KERNEL_C << 0x8) | KERNEL_S, %cx
@@ -75,7 +77,10 @@ bootsys_start:
 1:
 	/* TODO: go to protected mode here! */
 
-	lgdt tmp_gdtr
+	/* We need to use the linear (here same as physical) address. */
+	xor %eax, %eax
+	mov %cs, %ax
+	lgdt tmp_gdtr(, %eax, 4)
 
 	smsw %ax
 	or $0x1, %ax

@@ -1,5 +1,8 @@
 include(`include/cmos.h')
 
+/* TODO: super ugly! rectify that! */
+include(`../kernel/m4/kernel.m4')
+
 /* TODO: i dont like how boot_start is subtracted by 2 here. its intended to
  * serve word-alignment, but thats way too hardcoded. find something more
  * flexible to achieve the same thing. */
@@ -15,6 +18,8 @@ define(`VID_SEG', `0xb800')
 define(`NUM_COLS', `80')
 define(`VID_ATTR', `0xf')
 
+define(`BDA_EBDA_BASE', `0x40e') /* EBDA address = base_address:0x0 */
+
 .global boot_start
 
 .data
@@ -23,7 +28,12 @@ cpu32: .asciz "32-bit-compatible... ready to go!"
 not_cpu32: .asciz "Not 32-bit-compatible... kernel cannot start up."
 press_key: .asciz "Press a key to reboot..."
 
+kernel_too_large_msg: .asciz "The kernel is too large."
+
 curr_line: .byte 0x0
+sec_boot_addr:
+.word 0x0
+.word 0x0 /* initialized later on */
 
 .text
 boot_start:
@@ -45,8 +55,10 @@ boot_start:
 	mov $0x3, %ax
 	int $0x10
 
+	/* Zero out `ds'. */
 	xor %ax, %ax
 	mov %ax, %ds
+
 	mov $verify_cpu, %si
 	call puts
 
@@ -73,22 +85,37 @@ boot_start:
 	call puts
 
 	/*
-	 * Determine storage medium and checking validity of sector number
+	 * TODO: Determine storage medium and checking validity of sector number
 	 * according to those values.
 	 */
-
 	/* TODO: access cmos here! */
 
+	/* Get EBDA start address and check if kernel size is OK. */
+
+	mov BDA_EBDA_BASE, %ax /* get start seg addr of EBDA */
+	sub $0x1000 + BOOTSYS_SECTORS << 0x5, %ax
+	/*
+	 * `0x1000': point to 64 KiB before EBDA
+	 * `BOOTSYS_SECTORS << 0x5': make sure that loading the
+	 * sectors does not cross 64 KiB boundaries because that makes
+	 * the BIOS routine err
+	 */
+
+	mov %ax, sec_boot_addr + 0x2 /* for far jmp to secondary bootloader */
+	mov %ax, %dx
+	sub $KERNEL_ORG >> 0x4, %dx /* get paragraphs available for kernel */
+	cmp $KERNEL_SECTORS << 0x5, %dx /* shift does sectors -> paragraphs */
+	jb kernel_too_large
+	/* `ax' still contains the start segment address. */
 	
 	/* Now, load the Real Mode part of the kernel, effectively, a
 	 * second-stage bootloader. Retry three times because the read
 	 * command does not have a time-out. */
 	xor %bp, %bp
 1:
-	mov $BOOTSYS_SEG, %ax
+	mov sec_boot_addr + 0x2, %ax /* EBDA seg addr (off is `0x0') */
 	mov %ax, %es
 	xor %bx, %bx
-/* TODO: add rounding up here for bootsys_size! */
 	mov $0x200 | BOOTSYS_SECTORS, %ax
 	mov $(BOOTSYS_C << 0x8) | BOOTSYS_S, %cx
 	mov $(BOOTSYS_H << 0x8) | FLOPPY_DRV, %dx 
@@ -102,9 +129,7 @@ boot_start:
 	jmp 1b
 1:
 
-/* TODO: verify at preprocessing time that bootsys_seg:bootsys_off is aligned
- * on word oundaries! */
-ljmp $BOOTSYS_SEG, $0x0
+ljmp *sec_boot_addr
 
 /* TODO: change that to something more sophisticated later! */
 no_32b:
@@ -114,6 +139,13 @@ no_32b:
 	jmp reboot
 
 floppy_err:
+	/* TODO: add better user info here! */
+	jmp reboot
+
+kernel_too_large:
+	mov $kernel_too_large, %si
+	call puts
+
 	jmp reboot
 
 /* `ds:si' - string to print */

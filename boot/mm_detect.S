@@ -1,6 +1,7 @@
 include(`include/mm_detect.h')
 
 .global mm_detect
+.global mm_map
 
 SEC_BSS(`.bootsys_bss')
 mm_map:
@@ -15,7 +16,7 @@ SEC_TEXT(`.bootsys_text')
  * purpose of the counter register cx!
  */
 mm_detect:
-	mov $BOOTSYS_SEG, %ax
+	mov %ds, %ax
 	mov %ax, %es
 	mov $mm_map, %di
 	xor %ebx, %ebx
