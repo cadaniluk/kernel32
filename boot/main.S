@@ -50,7 +50,7 @@ bootsys_start:
 	mov $KERNEL_ORG & 0xf, %bx
 	mov $0x200 | KERNEL_SECTORS, %ax
 	mov $(KERNEL_C << 0x8) | KERNEL_S, %cx
-	mov $(KERNEL_H << 0x8) | FLOPPY_DRV), %dx
+	mov $(KERNEL_H << 0x8) | FLOPPY_DRV, %dx
 	int $0x13
 	jnc 1f
 	cmp $0x2, %bp
@@ -66,6 +66,6 @@ bootsys_start:
 
 floppy_err:
 	/* TODO: add proper error display using the floppy err table.
-	 * later, use the custom 16-bit floppy driver (if ever).
+	 * later, use the custom 16-bit floppy driver (if ever). */
 	cli
 	hlt
