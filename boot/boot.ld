@@ -2,7 +2,7 @@ ENTRY(boot_start)
 
 MEMORY {
 	boot : org = BOOT_ORG, len = BOOT_LEN
-	bootsys : org = 0x0, len = BOOTSYS_LEN
+	bootsys : org = 0x0, len = BOOTSYS_LEN /* org has only the offset */
 }
 
 
