@@ -31,6 +31,28 @@ bootsys_start:
 	mov %cs, %ax
 	mov %ax, %ds
 
+	call mm_detect
+
+	/* Load the kernel now. */
+
+	xor %bp, %bp
+1:
+	mov $KERNEL_ORG >> 0x4, %ax
+	mov %ax, %es
+	mov $KERNEL_ORG & 0xf, %bx
+	mov $0x200 | KERNEL_SECTORS, %ax
+	mov $(KERNEL_C << 0x8) | KERNEL_S, %cx
+	mov $(KERNEL_H << 0x8) | FLOPPY_DRV, %dx
+	int $0x13
+	jnc 1f
+	cmp $0x2, %bp
+	je floppy_err
+	inc %bp
+	xor %ah, %ah
+	int $0x13
+	jmp 1b
+1:
+
 	/*
 	 * Remap IRQs. Interrupts have been disabled in the
 	 * bootloader already.
@@ -53,29 +75,6 @@ bootsys_start:
 	mov i8259A_ICW4($i8259A_uPM & i8259A_x86), %al
 	out %al, i8259A_ICW4_ADDR($i8259A_MASTER)
 	out %al, i8259A_ICW4_ADDR($i8259A_SLAVE)
-
-	call mm_detect
-
-	/* Load the kernel now. */
-
-	xor %bp, %bp
-1:
-	mov $KERNEL_ORG >> 0x4, %ax
-	mov %ax, %es
-	mov $KERNEL_ORG & 0xf, %bx
-	mov $0x200 | KERNEL_SECTORS, %ax
-	mov $(KERNEL_C << 0x8) | KERNEL_S, %cx
-	mov $(KERNEL_H << 0x8) | FLOPPY_DRV, %dx
-	int $0x13
-	jnc 1f
-	cmp $0x2, %bp
-	je floppy_err
-	inc %bp
-	xor %ah, %ah
-	int $0x13
-	jmp 1b
-1:
-	/* TODO: go to protected mode here! */
 
 	/* We need to use the linear (here same as physical) address. */
 	xor %eax, %eax
