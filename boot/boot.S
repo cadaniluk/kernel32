@@ -1,5 +1,13 @@
 include(`include/cmos.h')
 
+/*
+ * TODO: add macro constant SECTOR_SIZE = 512 and replace all its former
+ * occurences as a magic constant. if the sector size turns out to not be fixed
+ * (it can be 512 or 4096 or whatever bytes, depending on the disk used),
+ * find something to determine that at runtime and use that value. replace all
+ * occurences of SECTOR_SIZE with that dynamically determined value.
+ */
+
 /* TODO: super ugly! rectify that! */
 include(`../kernel/m4/kernel.m4')
 
