@@ -76,7 +76,15 @@ bootsys_start:
 	out %al, i8259A_ICW4_ADDR($i8259A_MASTER)
 	out %al, i8259A_ICW4_ADDR($i8259A_SLAVE)
 
-	lgdt tmp_gdtr
+	/* Compute linear address of GDT to be loaded into the GDTR register. */
+	xor %eax, %eax
+	mov %cs, %ax
+	shl $0x4, %eax
+	add $tmp_gdt, %eax
+	mov %eax, tmp_gdtr + 0x2
+
+	/* TODO: lgdtl or lgdtw? maybe ask a question on SO on that... */
+	lgdtl tmp_gdtr
 
 	smsw %ax
 	or $0x1, %ax
