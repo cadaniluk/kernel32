@@ -603,7 +603,7 @@ private_colormap: enabled=0
 #
 # You can set the initial status of the media to 'ejected' or 'inserted'.
 #   floppya: 2_88=path, status=ejected    (2.88M 3.5"  media)
-   floppya: 1_44=boot.img, status=inserted   (1.44M 3.5"  media)
+   floppya: 1_44=image.img, status=inserted   (1.44M 3.5"  media)
 #   floppya: 1_2=path, status=ejected     (1.2M  5.25" media)
 #   floppya: 720k=path, status=inserted   (720K  3.5"  media)
 #   floppya: 360k=path, status=inserted   (360K  5.25" media)
@@ -623,7 +623,7 @@ private_colormap: enabled=0
 # The optional parameter 'write_protected' can be used to control the media
 # write protect switch. By default it is turned off.
 #=======================================================================
-floppya: 1_44=boot.img, status=inserted
+floppya: 1_44=image.img, status=inserted
 #floppya: image=../1.44, status=inserted
 #floppya: 1_44=/dev/fd0H1440, status=inserted
 #floppya: 1_2=../1_2, status=inserted
