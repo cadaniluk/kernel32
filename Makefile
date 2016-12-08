@@ -28,8 +28,10 @@ boot_debug: boot.sym boot.img
 all: image.img
 
 image.img: boot.img kernel.img kernel.sym
-	cp boot.img image.img
-	cat kernel.img >> image.img
+	rm -f image.img
+	bximage -mode=create -fd=1.44M -q image.img
+	dd if=boot.img of=image.img bs=512 count=4 conv=notrunc
+	dd if=kernel.img of=image.img bs=512 count=1 seek=4 conv=notrunc
 
 boot.img: boot.out
 
