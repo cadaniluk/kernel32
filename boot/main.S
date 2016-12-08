@@ -23,8 +23,8 @@ tmp_gdt:
 /* TODO: choose alignment to have address mod 4 = 2 */
 .balign 2
 tmp_gdtr:
-.int 0x0 /* to be initialized */
 .word 0x18 /* null, code, and data */
+.int 0x0 /* to be initialized */
 
 SEC_TEXT(`.bootsys_text')
 bootsys_start:
@@ -76,10 +76,7 @@ bootsys_start:
 	out %al, i8259A_ICW4_ADDR($i8259A_MASTER)
 	out %al, i8259A_ICW4_ADDR($i8259A_SLAVE)
 
-	/* We need to use the linear (here same as physical) address. */
-	xor %eax, %eax
-	mov %cs, %ax
-	lgdt tmp_gdtr(, %eax, 4)
+	lgdt tmp_gdtr
 
 	smsw %ax
 	or $0x1, %ax
