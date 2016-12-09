@@ -8,7 +8,7 @@ include(`include/i8042.h')
 .global i8042_sysreset
 .global i8042_setcmdbyte, i8042_cmdbyte
 .global i8042_rdinp, i8042_rdoutp, i8042_wroutp
-.global i8042_waitin, i8042_waitout, i8042_waitout_int
+.global i8042_win_empty, i8042_wout_full, i8042_wout_full_int
 
 SEC_TEXT(`.bootsys_text')
 i8042_init:
@@ -173,7 +173,7 @@ i8042_wroutp:
 	pop %ax
 	ret
 
-i8042_waitin: 
+i8042_win_empty: 
 1:
 	call i8042_instat
 	test $i8042_STAT_INEMPTY, %al
@@ -183,7 +183,7 @@ i8042_waitin:
 1:
 	ret
   
-i8042_waitout:
+i8042_wout_full:
 1:
 	call i8042_instat
 	test $i8042_STAT_OUTFULL, %al
@@ -193,7 +193,7 @@ i8042_waitout:
 1:
 	ret
   
-i8042_waitout_int:
+i8042_wout_full_int:
 	pushf
 	sti
 	hlt
@@ -201,17 +201,17 @@ i8042_waitout_int:
 	ret
 
 i8042_outdata:
-	call i8042_waitin
+	call i8042_win_empty
 	out %al, $i8042_DATA
 	ret
 
 i8042_outcmd:
-	call i8042_waitin
+	call i8042_win_empty
 	out %al, $i8042_CMD
 	ret
 
 i8042_indata:
-	call i8042_waitout
+	call i8042_wout_full
 	in $i8042_DATA, %al
 	ret
 
