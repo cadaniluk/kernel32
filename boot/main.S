@@ -31,6 +31,8 @@ bootsys_start:
 	mov %cs, %ax
 	mov %ax, %ds
 
+	/* TODO: enable the A20 address line. */
+
 	call mm_detect
 
 	/* Load the kernel now. */
