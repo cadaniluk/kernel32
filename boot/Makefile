@@ -1,10 +1,12 @@
 SHELL = /bin/bash
 ROOT = ..
 
+INCLUDE = include/
+
 M4 = m4
-M4PATH = "include/:$(ROOT)/"
 M4FILES = $(ROOT)/m4/global.m4 m4/boot.m4
 
+M4FLAGS += -I $(INCLUDE)
 ASFLAGS += --32 -g
 LDFLAGS += -melf_i386
 

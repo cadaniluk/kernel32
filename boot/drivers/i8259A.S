@@ -1,4 +1,4 @@
-include(`include/i8259A.h')
+include(`i8259A.h')
 
 .global i8259A_wait
 

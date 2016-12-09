@@ -1,4 +1,4 @@
-include(`include/i8042.h')
+include(`i8042.h')
 
 /* TODO: no `i8042_destroy' function so far... add if necessary! */
 .global i8042_init/*, i8042_destroy */

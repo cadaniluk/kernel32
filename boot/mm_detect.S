@@ -1,4 +1,4 @@
-include(`include/mm_detect.h')
+include(`mm_detect.h')
 
 .global mm_detect
 .global mm_map

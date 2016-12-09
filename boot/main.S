@@ -1,5 +1,5 @@
-include(`include/i8259A.h')
-include(`include/mm_detect.h')
+include(`i8259A.h')
+include(`mm_detect.h')
 /* TODO: super ugly! fix that! */
 include(`../kernel/m4/kernel.m4')
 /* TODO: super ugly! fix that! */

@@ -1,4 +1,4 @@
-include(`include/cmos.h')
+include(`cmos.h')
 
 /*
  * TODO: add macro constant SECTOR_SIZE = 512 and replace all its former
