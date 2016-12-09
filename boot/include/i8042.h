@@ -64,10 +64,10 @@ define(`i8042_PARITY', `0x80')
 
 
 /* Send current command byte to output buffer. */
-define(`i8042_RD_CMD', `0x20')
+define(`i8042_CMD_RD_CMD', `0x20')
 
 /* Use next byte written to data register as command byte. */
-define(`i8042_WR_CMD', `0x60')
+define(`i8042_CMD_WR_CMD', `0x60')
 
 
 /* ######################
@@ -107,7 +107,7 @@ define(`i8042_CMD_PC_COMPAT', `0x40')
 
 
 /* Performs internal self-tests. */
-define(`i8042_SELFTEST', `0xaa')
+define(`i8042_CMD_SELFTEST', `0xaa')
 
 /* Content of output buffer if self-test (command `0xaa') did not find any
  * errors. */
@@ -115,7 +115,7 @@ define(`i8042_SELFT_NOERR', `0x55')
 
 
 /* Interface test, which checks the keyboard clock and data lines. */
-define(`i8042_IFTEST', `0xab')
+define(`i8042_CMD_IFTEST', `0xab')
 
 /* Content of output buffer if no error. */
 define(`i8042_IFT_NOERR', `0x0')
@@ -123,18 +123,18 @@ define(`i8042_IFT_NOERR', `0x0')
 
 /* Sends 16 bytes of diagnostic information in scancode format to the system
  * state of input port, state of output port, program status word. */
-define(`i8042_DUMP', `0xac')
+define(`i8042_CMD_DUMP', `0xac')
 
 /* Disables the keyboard by setting the aforementioned bit 4 of the command
  * byte. */
-define(`i8042_DISABLE', `0xad')
+define(`i8042_CMD_DISABLE', `0xad')
 
 /* Enables the keyboard by clearing the aforementioned bit 4 of the command
  * byte. */
-define(`i8042_ENABLE', `0xae')
+define(`i8042_CMD_ENABLE', `0xae')
 
 /* Reads the input port and stores the content in the output buffer. */
-define(`i8042_RD_INP', `0xc0')
+define(`i8042_CMD_RD_INP', `0xc0')
 
 /* ####################
  * # INPUT PORT BITS: #
@@ -161,10 +161,10 @@ define(`i8042_INP_INHIBIT', `0x80')
 
 
 /* Reads the output port and stores the content in the output buffer. */
-define(`i8042_RD_OUTP', `0xd0')
+define(`i8042_CMD_RD_OUTP', `0xd0')
 
 /* Write the next byte written to the data register to the output port. */
-define(`i8042_WR_OUTP', `0xd1')
+define(`i8042_CMD_WR_OUTP', `0xd1')
 
 /* #####################
  * # OUTPUT PORT BITS: #
@@ -172,6 +172,8 @@ define(`i8042_WR_OUTP', `0xd1')
 
 /* All bits not defined here are reserved. */
 
+/* TODO: whats the difference between i8042_OUTP_INEMPTY and
+ * i8042_STAT_INEMPTY? */
 
 /* 0 - Reset the system.
  * 1 - System online. */
@@ -202,7 +204,7 @@ define(`i8042_DATA_OUT', `0x80')
 /* ########################################################################## */
 
 /* Read test inputs `T0' and `T1' into output buffer. */
-define(`i8042_RD_TEST', `0xe0')
+define(`i8042_CMD_RD_TEST', `0xe0')
 
 /* ########################
  * # TEST INPUT MEANINGS: #
@@ -253,5 +255,106 @@ define(`i8042_IFT_DHIGH', `0x4')
 define(`i8042_E_NOERR', `0x0')
 define(`i8042_E_IFTEST', `0x1')
 define(`i8042_E_SELFTEST', `0x2')
+
+/* Sets the content of the command byte. */
+define(`i8042_SET_CMD_BYTE', `dnl
+	push %ax
+
+	mov %al, %ah
+	mov $i8042_CMD_WR_CMD, %al
+	i8042_WR_CMD
+
+	xchg %ah, %al
+	i8042_WR_DATA
+
+	pop %ax
+')
+
+/* Returns the command byte. */
+define(`i8042_CMD_BYTE', `dnl
+	mov $i8042_CMD_RD_CMD, %al
+	i8042_WR_CMD
+	i8042_RD_DATA
+')
+
+
+/* Reads from the input port. */ 
+define(`i8042_RD_INP', `dnl
+	mov $i8042_CMD_RD_INP, %al
+	i8042_WR_CMD
+	i8042_RD_DATA
+')
+
+/* Reads from the output port. */
+define(`i8042_RD_OUTP', `dnl
+	mov $i8042_CMD_RD_OUTP, %al
+	i8042_WR_CMD
+	i8042_RD_DATA
+')
+
+/* Writes to the output port. */
+define(`i8042_WR_OUTP', `dnl
+	push %ax
+
+	mov %al, %ah
+	mov $i8042_CMD_WR_OUTP, %al
+	i8042_WR_CMD
+
+	xchg %ah, %al
+	i8042_WR_DATA
+
+	pop %ax
+')
+
+/* Wait until the input buffer is empty. */
+define(`i8042_WIN_EMPTY', `dnl
+	push %ax
+1:
+	in $i8042_STATUS, %al
+	test $i8042_STAT_INEMPTY, %al
+	jnz 1f
+	pause
+	jmp 1b
+1:
+	pop %ax
+')
+
+/* Wait until the output buffer is full. */
+define(`i8042_WOUT_FULL', `dnl
+	push %ax
+1:
+	in $i8042_STATUS, %al
+	test $i8042_STAT_OUTFULL, %al
+	jnz 1f
+	pause
+	jmp 1b
+1:
+	pop %ax
+')
+ 
+/* Write to the data register. */
+define(`i8042_WR_DATA', `dnl
+	i8042_WIN_EMPTY
+	out %al, $i8042_DATA
+')
+
+/* Write to the command register. */
+define(`i8042_WR_CMD', `dnl
+	i8042_WIN_EMPTY
+	out %al, $i8042_CMD
+')
+
+/* Read from the data register. */
+define(`i8042_RD_DATA', `dnl
+	i8042_WOUT_FULL
+	in $i8042_DATA, %al
+')
+
+/*
+ * TODO: find a way to have temporary labels without interfering with
+ * code outside of a macro. the code outside doesnt see the label in the macro.
+ * if code outside does like `jmp 1f' and a macro in between happens to
+ * contain a label `1:', the jump is performed to that label in the macro.
+ */
 
 ) /* i8042_H */
