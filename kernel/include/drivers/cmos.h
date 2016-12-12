@@ -1,5 +1,3 @@
-/* Sources: 3, 15 */
-
 /* TODO: make the documentation comments look beautiful! add
  * periods, commas, and whatever necessary to make them
  * a tad bit prettier. THIS GOES FOR EVERY FILE IN THIS PROJECT.
@@ -14,17 +12,14 @@
 #ifndef CMOS_H
 #define CMOS_H
 
-#include <types.h>
-#include <io.h>
-
-/* Used to select the address of a CMOS memory location. Write the offset of
- * the location to this register to select one. */ 
-#define CMOS_SELADDR 0x70
+/* Used to select a CMOS memory location. Write the offset of the
+ * location to this register to select one. */ 
+#define CMOS_REGSEL 0x70
 
 /* Used to read or write from or to CMOS memory. After a memory
  * location has been selected using I/O port `CMOS_REGSEL',
  * this port can be used to access the data at that location. */
-#define CMOS_DATA 0x71
+#define CMOS_REGDATA 0x71
 
 /* #############################
  * # RTC CMOS RAM INFORMATION: #
@@ -44,9 +39,6 @@
 #define CMOS_RTC_MONTH 0x8
 #define CMOS_RTC_YEAR 0x9
 
-/* I did not deem an RTC status register buffer necessary because it is
- * not needed that often and the overhead is a bit too much if it lacks any
- * significant use cases. */  
 
 /* RTC status register A. */
 #define CMOS_RTC_REGA 0xa
@@ -233,8 +225,9 @@
  * The other way around seems illogical due to the "n," so I finally decided
  * on "no."
  *
- * I hope I have not made a mistake here... it is easy to get confused with
- * that table from the IBM PC AT reference I have copied those values from. */
+ * I hope I have not made a mistake here... it is presumably easy to get
+ * confused with that table from the IBM PC AT reference I have copied those
+ * values from. 
 #define CMOS_C306_H4_W128_L305 0x1
 #define CMOS_C615_H4_W300_L615 0x2
 #define CMOS_C615_H6_W300_L615 0x3
@@ -251,7 +244,7 @@
 #define CMOS_C733_H7_L733 0xe
 
 /* The last type is reserved. The IBM PC AT reference says it is
- * set to all zeros but I don't really see the benefit in this assumption. */
+ * set to all zeros but I don't really see the value of this assumption. */
 
 
 /* So-called "equipment byte." Believe it or not, it contains information
@@ -355,106 +348,7 @@
 #define CMOS_MEMEX_128KB_AVAIL 0x80
 
 /* Used to print out a first user message after initial setup by the setup
- * utility.
- * That's what the IBM PC AT reference says. I don't know when it is set or
- * cleared. Dig deeper for more information. */
+ * utility. */
 #define CMOS_INITMSG 0x40
-
-
-/* ################################
- * Here begins the high-level part.
- * ################################ */ 
-
-#if __ASSEMBLER__ != 1
-
-/* TODO: add typedef uint8_t cmos_err_t, cmos_init and cmos_destroy if needed! 
- * typedef uint8_t cmos_err_t;
- * cmos_err_t cmos_init(void);
- * cmos_err_t cmos_destroy(void);
- * These are just examplatory declarations. Change them if need be.  */
-
-/* Waits until the RTC is readable. */
-static inline void cmos_rtc_waitrd(void);
-
-/* Acquires the RTC, so that the values are no more updated and the CPU (us)
- * can write to it. */ 
-static inline void cmos_rtc_lock(void);
-
-/* Releases the RTC, so that the values are resumed to be updated and the
- * CPU (us) cannot write ot  
-/* Writes a value to a CMOS configuration memory location. This includes
- * those memory locations for which no explicit writing function exists. */
-static inline void cmos_wr_conf(uint8_t mask, uint8_t val, uint8_t cmos_addr);
-
-/* Writes a value to a CMOS RTC memory location. To be used with all RTC 
- * values but NOT the RTC status registers! */
-static inline void cmos_wr_rtc(uint8_t val, uint8_t cmos_addr);
-
-/* Reads a value from a CMOS configuration memory location. This includes
- * those memory locations for which no explicit reading function exists. */
-static inline void cmos_rd_conf(uint8_t cmos_addr);
-
-/* Reads a value from a CMOS RTC memory location. To be used with all RTC
- * values but NOT the RTC status registers! */   
-static inline void cmos_rd_rtc(uint8_t cmos_addr);
-
-
-/* ################
- * # I/O HELPERS: #
- * ################ */
-
-/* The RTC functions might make use of the functions actually intended for
- * configuration bytes; the RTC functions basically add some security wrapper
- * to the configuration functions and call them internally. I could have
- * just as well called the configuration functions something with `nrml' for
- * "normal" functions but to the driver user the usage of configuration
- * functions is not visible anyway and a "normal" might appear confusing: what
- * is normal in this context? */
-
-static inline void cmos_wr_conf(uint8_t mask, uint8_t val, uint8_t cmos_addr) {
-    io_outb(cmos_addr, CMOS_SELADDR);
-    io_outb(val & mask, cmos_addr);
-}
-
-static inline void cmos_wr_rtc(uint8_t val, uint8_t cmos_addr) {
-    uint8_t reg_a = cmos_rd_conf(CMOS_RTC_REGA);
-
-/* TODO: optimize this. if we want to update multiple rtc values simultaneously
- * what to do? calling this function multiple times requires setting CMOS_UIP
- * every time, which is bad for performance. */
-/* TODO: do i have to wait until the RTC is accessible here first? Or can I just
- * "acquire" the without further action? */ 
-    cmos_wr_conf(reg_a | CMOS_UIP, CMOS_RTC_REGA);
-    cmos_wr_conf(val, cmos_addr);
-
-    /* `CMOS_UIP' is explicitly cleared because the original status register
-     * A content might already contain that bit set. */ 
-    cmos_wr_conf(reg_a & ~CMOS_UIP, CMOS_RTC_REGA);  
-}
-
-static inline void cmos_rd_conf(uint8_t cmos_addr) {
-    io_outb(cmos_addr, CMOS_SELADDR);
-    return io_inb(CMOS_DATA);
-}
-
-static inline void cmos_rd_rtc(uint8_t cmos_addr) {
-    /* Waits as long as the RTC is updated. A synchronization mechanism
-     * similar to vertical synchronization on screens. We simply presume
-     * the CPU is fast enough to read the data before the next RTC update
-     * follows. */ 
-    while (cmos_rd_conf(CMOS_RTC_REGA) & CMOS_RTC_UIP);
-    return io_inb(CMOS_DATA);
-}
-
-/* I thought about having a `struct cmos_rtc' to keep all the RTC values there
- * but decided against it because it would be pretty useless. No one needs
- * to read/write all the RTC values at a time. If needed at a higher level,
- * add it there, but it is not necessary in this CMOS driver. */
-
-/* TODO: find out if the CMOS controller requires some waiting period for it
- * to process the input and possibly produce output similarly to
- * `i8259A_waitout'. */
-
-#endif /* __ASSEMBLER__ != 1 */
 
 #endif /* CMOS_H */
