@@ -19,11 +19,12 @@ tmp_gdt:
 .word 0x0, 0x0, 0x0, 0x0
 .word 0xffff, 0x0, 0x9800, 0xcf
 .word 0xffff, 0x0, 0x9200, 0xcf
+.set tmp_gdt_len, . - tmp_gdt
 
 /* TODO: choose alignment to have address mod 4 = 2 */
 .balign 2
 tmp_gdtr:
-.word 0x18 /* null, code, and data */
+.word tmp_gdt_len /* null, code, and data */
 .int 0x0 /* to be initialized */
 
 SEC_TEXT(`.bootsys_text')
