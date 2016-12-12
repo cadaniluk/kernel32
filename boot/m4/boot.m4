@@ -23,5 +23,5 @@ define(`KERNEL_S', `(BOOTSYS_S + BOOTSYS_SECTORS)')
 
 /* TODO: find a way to determine the number of kernel sectors in correlation to
  * the kernel size (like num_sectors = kernel_size >> 16). same for boot sectors. */
-define(`KERNEL_SECTORS', `0x1')
+define(`KERNEL_SECTORS', `0x8')
 )dnl
