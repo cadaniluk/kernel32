@@ -9,6 +9,8 @@
  * even sure the original IBM PC AT CMOS definitions are supported on
  * every x86 machine. */
 
+/* TODO: CONVERT THIS TO M4! */
+
 #ifndef CMOS_H
 #define CMOS_H
 
