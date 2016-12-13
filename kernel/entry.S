@@ -33,6 +33,9 @@ idtr:
 
 .text
 kernel_start:
+	mov $0x10, %ax
+	mov %ax, %ds
+
 	lgdt gdtr
 	lidt idtr
 	ljmp $0x8, $1f
