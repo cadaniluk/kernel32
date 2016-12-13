@@ -48,7 +48,7 @@ ifelse(`$#', `1', , ` | _VGA_MAP_BITS(shift($@))')dnl
 
 define(`VGA_MISC_OUT_RD', `0x3cc') /* Miscellaneous Output Register Read */
 define(`VGA_MISC_OUT_WR', `0x3c2') /* Miscellaneous Output Register Write */
-define(`VGA_IN_STAT0'), `0x3c2') /* Input Status Register 0 */
+define(`VGA_IN_STAT0', `0x3c2') /* Input Status Register 0 */
 
 /* Input Status Register 1 */ 
 define(`VGA_IN_STAT1', `
@@ -232,9 +232,9 @@ define(`VGA_EHR', `0x1f') /* End Horizontal Retrace */
 define(`VGA_VRS9', `0x80') /* Vertical Retrace Start, Bit 9 */
 define(`VGA_VDE9', `0x40') /* Vertical Display Enable End, Bit 9 */
 define(`VGA_VT9', `0x20') /* Vertical Total, Bit 9 */
-define(`VGA_LC8'), `0x10') /* Line Compare, Bit 8 */
+define(`VGA_LC8', `0x10') /* Line Compare, Bit 8 */
 define(`VGA_VBS8', `0x8') /* Vertical Blanking Start, Bit 8 */
-define(`VGA_VRS8'), `0x4') /* Vertical Retrace Start, Bit 8 */
+define(`VGA_VRS8', `0x4') /* Vertical Retrace Start, Bit 8 */
 define(`VGA_VDE8', `0x2') /* Vertical Display Enable End, Bit 8 */
 define(`VGA_VT8', `0x1') /* Vertical Total, Bit 8 */
 
