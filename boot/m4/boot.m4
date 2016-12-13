@@ -5,8 +5,6 @@ define(`BOOT_LEN', `0x200')dnl
 dnl
 define(`BOOTSYS_LEN', `0x10000')
 dnl
-define(`FLOPPY_DRV', `0x0')
-dnl
 /* TODO: make more flexible by reading from cmos! */
 /* Format of a 1.44 MiB floppy. */
 define(`CYLINDERS', `80')

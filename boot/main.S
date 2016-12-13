@@ -25,10 +25,15 @@ tmp_gdtr:
 .word tmp_gdt_len /* null, code, and data */
 .int 0x0 /* to be initialized */
 
+drv_num: .byte 0x0
+
 SEC_TEXT(`.bootsys_text')
 bootsys_start:
 	mov %cs, %ax
 	mov %ax, %ds
+
+	/* Get the drive number. */
+	mov %dl, drv_num
 
 	/* TODO: enable the A20 address line. */
 
@@ -44,7 +49,8 @@ bootsys_start:
 	mov $0x200 | KERNEL_SECTORS, %ax
 	mov $(LBA_TO_C(HEADS, SECTORS, KERNEL_LBA) << 0x8) | dnl
 	LBA_TO_S(HEADS, SECTORS, KERNEL_LBA), %cx
-	mov $(LBA_TO_H(HEADS, SECTORS, KERNEL_LBA) << 0x8) | FLOPPY_DRV, %dx
+	mov $(LBA_TO_H(HEADS, SECTORS, KERNEL_LBA) << 0x8), %dh
+	mov drv_num, %dl
 	int $0x13
 	jnc 1f
 	cmp $0x2, %bp

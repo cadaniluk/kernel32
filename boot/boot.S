@@ -41,12 +41,16 @@ press_key: .asciz "Press a key to reboot..."
 kernel_too_large_msg: .asciz "The kernel is too large."
 
 curr_line: .byte 0x0
+drv_num: .byte 0x0
 sec_boot_addr:
 .word 0x0
 .word 0x0 /* initialized later on */
 
 .text
 boot_start:
+	/* Obtain drive number we are booting from. */
+	mov %dl, drv_num
+
 	/*
 	 * We do not need interrupts anywhere in the bootloader, so we
 	 * disable them right away.
@@ -129,7 +133,8 @@ boot_start:
 	mov $0x200 | BOOTSYS_SECTORS, %ax
 	mov $(LBA_TO_C(HEADS, SECTORS, BOOTSYS_LBA) << 0x8) | dnl
 	LBA_TO_S(HEADS, SECTORS, BOOTSYS_LBA), %cx
-	mov $(LBA_TO_H(HEADS, SECTORS, BOOTSYS_LBA) << 0x8) | FLOPPY_DRV, %dx 
+	mov $(LBA_TO_H(HEADS, SECTORS, BOOTSYS_LBA) << 0x8), %dh
+	mov drv_num, %dl
 	int $0x13
 	jnc 1f
 	cmp $0x2, %bp
@@ -140,6 +145,7 @@ boot_start:
 	jmp 1b
 1:
 
+mov drv_num, %dl
 ljmp *sec_boot_addr
 
 /* TODO: change that to something more sophisticated later! */
