@@ -2,8 +2,6 @@ include(`i8259A.h')
 include(`mm_detect.h')
 /* TODO: super ugly! fix that! */
 include(`../kernel/m4/kernel.m4')
-/* TODO: super ugly! fix that! */
-include(`../kernel/include/descr.h')
 
 define(`USER_INT_START', `0x20') /* first usable interrupt */
 define(`i8259A_MASTER', `0x20')
@@ -44,8 +42,9 @@ bootsys_start:
 	mov %ax, %es
 	mov $KERNEL_ORG & 0xf, %bx
 	mov $0x200 | KERNEL_SECTORS, %ax
-	mov $(KERNEL_C << 0x8) | KERNEL_S, %cx
-	mov $(KERNEL_H << 0x8) | FLOPPY_DRV, %dx
+	mov $(LBA_TO_C(HEADS, SECTORS, KERNEL_LBA) << 0x8) | dnl
+	LBA_TO_S(HEADS, SECTORS, KERNEL_LBA), %cx
+	mov $(LBA_TO_H(HEADS, SECTORS, KERNEL_LBA) << 0x8) | FLOPPY_DRV, %dx
 	int $0x13
 	jnc 1f
 	cmp $0x2, %bp

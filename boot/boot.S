@@ -127,8 +127,9 @@ boot_start:
 	mov %ax, %es
 	xor %bx, %bx
 	mov $0x200 | BOOTSYS_SECTORS, %ax
-	mov $(BOOTSYS_C << 0x8) | BOOTSYS_S, %cx
-	mov $(BOOTSYS_H << 0x8) | FLOPPY_DRV, %dx 
+	mov $(LBA_TO_C(HEADS, SECTORS, BOOTSYS_LBA) << 0x8) | dnl
+	LBA_TO_S(HEADS, SECTORS, BOOTSYS_LBA), %cx
+	mov $(LBA_TO_H(HEADS, SECTORS, BOOTSYS_LBA) << 0x8) | FLOPPY_DRV, %dx 
 	int $0x13
 	jnc 1f
 	cmp $0x2, %bp
