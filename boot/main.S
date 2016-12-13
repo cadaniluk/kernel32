@@ -8,6 +8,8 @@ define(`USER_INT_START', `0x20') /* first usable interrupt */
 define(`i8259A_MASTER', `0x20')
 define(`i8259A_SLAVE', `0xa0')
 
+define(`DEF_ATTR', `0xf')
+
 .global bootsys_start
 
 /* TODO: maybe add some additional logging messages! */
@@ -26,15 +28,32 @@ tmp_gdtr:
 .word tmp_gdt_len /* null, code, and data */
 .int 0x0 /* to be initialized */
 
+mm_detect_msg: .asciz "Memory detection running...\r\n"
+load_kern_msg: .asciz "Loading the kernel...\r\n"
+
+SEC_TEXT(`.bootsys_text')
 bootsys_start:
 	mov %cs, %ax
 	mov %ax, %ds
 
+	xor %ax, %ax
+	mov %ax, %es
+	mov %es:CURR_LINE, %ah
+	call vga_init
+
 	/* TODO: enable the A20 address line. */
+
+	mov $mm_detect_msg, %si
+	mov $DEF_ATTR, %al
+	call vga_puts
 
 	call mm_detect
 
 	/* Load the kernel now. */
+
+	mov $load_kern_msg, %si
+	mov $DEF_ATTR, %al
+	call vga_puts
 
 	xor %bp, %bp
 1:
