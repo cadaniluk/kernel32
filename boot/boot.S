@@ -1,3 +1,4 @@
+include(`sec_boot_params.h')
 include(`cmos.h')
 
 /*
@@ -40,8 +41,6 @@ press_key: .asciz "Press a key to reboot..."
 
 kernel_too_large_msg: .asciz "The kernel is too large."
 
-curr_line: .byte 0x0
-drv_num: .byte 0x0
 sec_boot_addr:
 .word 0x0
 .word 0x0 /* initialized later on */
@@ -49,7 +48,7 @@ sec_boot_addr:
 .text
 boot_start:
 	/* Obtain drive number we are booting from. */
-	mov %dl, drv_num
+	mov %dl, DRV_NUM
 
 	/*
 	 * We do not need interrupts anywhere in the bootloader, so we
@@ -134,7 +133,7 @@ boot_start:
 	mov $(LBA_TO_C(HEADS, SECTORS, BOOTSYS_LBA) << 0x8) | dnl
 	LBA_TO_S(HEADS, SECTORS, BOOTSYS_LBA), %cx
 	mov $(LBA_TO_H(HEADS, SECTORS, BOOTSYS_LBA) << 0x8), %dh
-	mov drv_num, %dl
+	mov DRV_NUM, %dl
 	int $0x13
 	jnc 1f
 	cmp $0x2, %bp
@@ -145,7 +144,6 @@ boot_start:
 	jmp 1b
 1:
 
-mov drv_num, %dl
 ljmp *sec_boot_addr
 
 /* TODO: change that to something more sophisticated later! */
@@ -173,9 +171,9 @@ puts:
 	push %es
 
 	mov $NUM_COLS * 0x2, %al /* `* 0x2' for char + attr */
-	mulb curr_line
+	mulb CURR_LINE
 	mov %ax, %di
-	incb curr_line
+	incb CURR_LINE
 
 	mov $VID_SEG, %ax
 	mov %ax, %es
