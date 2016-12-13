@@ -6,12 +6,26 @@ define(`VID_SEG', `0xb800')
 define(`ROWS', `25')
 define(`COLUMNS', `80')
 
+.global vga_init
 .global vga_puts
 
 SEC_RW_DATA(`.bootsys_data')
 curr_pos: .word 0x0
 
 SEC_TEXT(`.bootsys_text')
+/*
+ * `ah' - line where to start
+ */
+vga_init:
+	push %ax
+
+	mov $COLUMNS << 0x1, %al
+	mul %ah
+	mov %ax, curr_pos
+
+	pop %ax
+	ret
+
 /*
  * `ds:si' - string to print
  * `al' - character attribute
