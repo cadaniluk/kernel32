@@ -163,9 +163,10 @@ kernel_too_large:
 
 	jmp reboot
 
-/* `ds:si' - string to print */
-/* Currently only goes to the next line... add video driver support and
- * use the video driver then! */
+/*
+ * `ds:si' - string to print
+ * Very basic - only prints a string and goes to the next line then.
+ */
 puts:
 	push %ax
 	push %es
