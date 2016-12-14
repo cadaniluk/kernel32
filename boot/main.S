@@ -28,8 +28,11 @@ tmp_gdtr:
 .word tmp_gdt_len /* null, code, and data */
 .int 0x0 /* to be initialized */
 
-mm_detect_msg: .asciz "Memory detection running...\r\n"
+mm_detect_msg: .asciz "Running memory detection...\r\n"
 load_kern_msg: .asciz "Loading the kernel...\r\n"
+remap_irqs_msg: .asciz "Remapping IRQs...\r\n"
+set_pe_msg: .asciz "Setting PE flag...\r\n"
+kern_jmp_msg: .asciz "Jumping into kernel code...\r\n"
 
 SEC_TEXT(`.bootsys_text')
 bootsys_start:
@@ -80,6 +83,10 @@ bootsys_start:
 	 * bootloader already.
 	 */
 
+	mov $remap_irqs_msg, %si
+	mov $DEF_ATTR, %al
+	call vga_puts
+
 	mov i8259A_ICW1($i8259A_IC4), %al
 	out %al, i8259A_ICW1_ADDR($i8259A_MASTER)
 	out %al, i8259A_ICW1_ADDR($i8259A_SLAVE)
@@ -107,6 +114,14 @@ bootsys_start:
 
 	/* TODO: lgdtl or lgdtw? maybe ask a question on SO on that... */
 	lgdtl tmp_gdtr
+
+	mov $set_pe_msg, %si
+	mov $DEF_ATTR, %al
+	call vga_puts
+
+	mov $kern_jmp_msg, %si
+	mov $DEF_ATTR, %al
+	call vga_puts
 
 	smsw %ax
 	or $0x1, %ax
