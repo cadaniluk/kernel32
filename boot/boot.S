@@ -180,6 +180,8 @@ kernel_too_large:
  */
 puts:
 	push %ax
+	push %si
+	push %di
 	push %es
 
 	mov $NUM_COLS * 0x2, %al /* `* 0x2' for char + attr */
@@ -198,6 +200,8 @@ puts:
 	jmp 1b
 2:
 	pop %es
+	pop %di
+	pop %si
 	pop %ax
 
 	ret
