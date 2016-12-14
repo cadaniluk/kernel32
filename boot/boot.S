@@ -47,6 +47,10 @@ sec_boot_addr:
 
 .text
 boot_start:
+	/* Initialize current line to zero. The values of memory locations
+	 * are indeterminate on reset. */
+	movb $0x0, CURR_LINE
+
 	/* Obtain drive number we are booting from. */
 	mov %dl, DRV_NUM
 
