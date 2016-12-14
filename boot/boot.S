@@ -27,7 +27,9 @@ define(`BOOT_SP', `(BOOT_ORG - BOOT_SS * 0x10)')
 
 define(`VID_SEG', `0xb800')
 define(`NUM_COLS', `80')
-define(`VID_ATTR', `0xf')
+define(`DEF_ATTR', `0xf')
+define(`OK_ATTR', `0x2f')
+define(`ERR_ATTR', `0x4f')
 
 define(`BDA_EBDA_BASE', `0x40e') /* EBDA address = base_address:0x0 */
 
@@ -77,6 +79,7 @@ boot_start:
 	mov %ax, %ds
 
 	mov $verify_cpu, %si
+	mov $DEF_ATTR, %bl
 	call puts
 
 	/* TODO: check for intel 64 as well and take appropriate action! */
@@ -99,6 +102,7 @@ boot_start:
 	jne no_32b
 
 	mov $cpu32, %si
+	mov $OK_ATTR, %bl
 	call puts
 
 	/*
@@ -153,6 +157,7 @@ ljmp *sec_boot_addr
 /* TODO: change that to something more sophisticated later! */
 no_32b:
 	mov $not_cpu32, %si
+	mov $ERR_ATTR, %bl
 	call puts
 
 	jmp reboot
@@ -163,12 +168,14 @@ floppy_err:
 
 kernel_too_large:
 	mov $kernel_too_large, %si
+	mov $ERR_ATTR, %bl
 	call puts
 
 	jmp reboot
 
 /*
  * `ds:si' - string to print
+ * `bl' - character attribute
  * Very basic - only prints a string and goes to the next line then.
  */
 puts:
@@ -182,7 +189,7 @@ puts:
 
 	mov $VID_SEG, %ax
 	mov %ax, %es
-	mov $VID_ATTR, %ah
+	mov %bl, %ah
 1:
 	lodsb
 	test %al, %al
@@ -197,6 +204,7 @@ puts:
 
 reboot:
 	mov $press_key, %si
+	mov $DEF_ATTR, %bl
 	call puts
 
 	/* Read a keystroke. */
