@@ -28,11 +28,11 @@ tmp_gdtr:
 .word tmp_gdt_len /* null, code, and data */
 .int 0x0 /* to be initialized */
 
-mm_detect_msg: .asciz "Running memory detection...\r\n"
-load_kern_msg: .asciz "Loading the kernel...\r\n"
-remap_irqs_msg: .asciz "Remapping IRQs...\r\n"
-set_pe_msg: .asciz "Setting PE flag...\r\n"
-kern_jmp_msg: .asciz "Jumping into kernel code...\r\n"
+mm_detect_msg: .asciz "Running memory detection\r\n"
+load_kern_msg: .asciz "Loading the kernel\r\n"
+remap_irqs_msg: .asciz "Remapping IRQs\r\n"
+set_pe_msg: .asciz "Setting PE flag\r\n"
+kern_jmp_msg: .asciz "Jumping into kernel code\r\n"
 
 SEC_TEXT(`.bootsys_text')
 bootsys_start:

@@ -34,10 +34,10 @@ define(`BDA_EBDA_BASE', `0x40e') /* EBDA address = base_address:0x0 */
 .global boot_start
 
 .data
-verify_cpu: .asciz "Verifying CPU..."
-cpu32: .asciz "32-bit-compatible... ready to go!"
+verify_cpu: .asciz "Verifying CPU"
+cpu32: .asciz "32-bit-compatible...  ready to go!"
 not_cpu32: .asciz "Not 32-bit-compatible... kernel cannot start up."
-press_key: .asciz "Press a key to reboot..."
+press_key: .asciz "Press a key to reboot"
 
 kernel_too_large_msg: .asciz "The kernel is too large."
 
