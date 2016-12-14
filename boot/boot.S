@@ -195,6 +195,8 @@ reboot:
 	mov $press_key, %si
 	call puts
 
-	/* TODO: add key reading function here! */
+	/* Read a keystroke. */
+	xor %ah, %ah
+	int $0x16
 
 	ljmp $0xf000, $0xfff0
