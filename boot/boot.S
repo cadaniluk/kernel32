@@ -48,10 +48,10 @@ sec_boot_addr:
 boot_start:
 	/* Initialize current line to zero. The values of memory locations
 	 * are indeterminate on reset. */
-	movb $0x0, CURR_LINE
+	movb $0x0, SBP_CURR_LINE
 
 	/* Obtain drive number we are booting from. */
-	mov %dl, DRV_NUM
+	mov %dl, SBP_DRV_NUM
 
 	/*
 	 * We do not need interrupts anywhere in the bootloader, so we
@@ -138,7 +138,7 @@ boot_start:
 	mov $(LBA_TO_C(HEADS, SECTORS, BOOTSYS_LBA) << 0x8) | dnl
 	LBA_TO_S(HEADS, SECTORS, BOOTSYS_LBA), %cx
 	mov $(LBA_TO_H(HEADS, SECTORS, BOOTSYS_LBA) << 0x8), %dh
-	mov DRV_NUM, %dl
+	mov SBP_DRV_NUM, %dl
 	int $0x13
 	jnc 1f
 	cmp $0x2, %bp
@@ -186,9 +186,9 @@ puts:
 	push %es
 
 	mov $NUM_COLS * 0x2, %al /* `* 0x2' for char + attr */
-	mulb CURR_LINE
+	mulb SBP_CURR_LINE
 	mov %ax, %di
-	incb CURR_LINE
+	incb SBP_CURR_LINE
 
 	mov $VID_SEG, %ax
 	mov %ax, %es

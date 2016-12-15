@@ -47,7 +47,7 @@ bootsys_start:
 
 	xor %ax, %ax
 	mov %ax, %es
-	mov %es:CURR_LINE, %ah
+	mov %es:SBP_CURR_LINE, %ah
 	call vga_init
 
 	/* TODO: enable the A20 address line. */
@@ -73,7 +73,7 @@ bootsys_start:
 	mov $(LBA_TO_C(HEADS, SECTORS, KERNEL_LBA) << 0x8) | dnl
 	LBA_TO_S(HEADS, SECTORS, KERNEL_LBA), %cx
 	mov $(LBA_TO_H(HEADS, SECTORS, KERNEL_LBA) << 0x8), %dh
-	mov DRV_NUM, %dl
+	mov SBP_DRV_NUM, %dl
 	int $0x13
 	jnc 1f
 	dec %ah /* error message with ID 1 is at index `0x0' */
