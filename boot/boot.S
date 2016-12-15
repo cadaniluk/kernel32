@@ -36,6 +36,7 @@ cpu32_msg: .asciz "32-bit-compatible...  ready to go"
 not_cpu32_msg: .asciz "Not 32-bit-compatible... kernel cannot start up"
 press_key_msg: .asciz "Press a key to reboot"
 kernel_too_large_msg: .asciz "The kernel is too large"
+sec_boot_jmp_msg: .asciz "Jumping to the secondary bootloader"
 
 sec_boot_addr:
 .word 0x0
@@ -145,6 +146,10 @@ boot_start:
 	int $0x13
 	jmp 1b
 1:
+
+mov $sec_boot_jmp_msg, %si
+mov $DEF_ATTR, %bl
+call puts
 
 ljmp *sec_boot_addr
 
