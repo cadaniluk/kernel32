@@ -5,6 +5,10 @@ define(`BOOT_LEN', `0x200')dnl
 dnl
 define(`BOOTSYS_LEN', `0x10000')
 dnl
+define(`DEF_ATTR', `0xf') /* default */
+define(`OK_ATTR', `0x2f') /* for successful operations */
+define(`ERR_ATTR', `0x4f') /* for errors */
+dnl
 /* TODO: make more flexible by reading from cmos! */
 /* Format of a 1.44 MiB floppy. */
 define(`CYLINDERS', `80')

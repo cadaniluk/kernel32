@@ -1,5 +1,6 @@
 include(`sec_boot_params.h')
 include(`cmos.h')
+include(`vga.h')
 
 /*
  * TODO: add macro constant SECTOR_SIZE = 512 and replace all its former
@@ -24,12 +25,6 @@ define(`BOOT_SP', `(BOOT_ORG - BOOT_SS * 0x10)')
  * detect micro-optimizations but using calls to functions,
  * for example! the apm functions, for example, can all be wrapped into
  * call functions and thus we can save valuable bootloader space. */
-
-define(`VID_SEG', `0xb800')
-define(`NUM_COLS', `80')
-define(`DEF_ATTR', `0xf')
-define(`OK_ATTR', `0x2f')
-define(`ERR_ATTR', `0x4f')
 
 define(`BDA_EBDA_BASE', `0x40e') /* EBDA address = base_address:0x0 */
 
