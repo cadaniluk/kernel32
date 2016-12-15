@@ -28,8 +28,13 @@ tmp_gdtr:
 .word tmp_gdt_len /* null, code, and data */
 .int 0x0 /* to be initialized */
 
+/* TODO: printing the crlf alone is pretty inefficient. it is no necessity,
+ * but improving that would indeed be nice. */
+crlf: .asciz "\r\n"
 mm_detect_msg: .asciz "Running memory detection\r\n"
-load_kern_msg: .asciz "Loading the kernel\r\n"
+load_kern_msg: .asciz "Loading the kernel (retrying three times)\r\n"
+load_kern_ok_msg: .asciz "Loading the kernel succeded\r\n"
+load_kern_fail_msg: .asciz "Loading the kernel failed\r\n"
 remap_irqs_msg: .asciz "Remapping IRQs\r\n"
 set_pe_msg: .asciz "Setting PE flag\r\n"
 kern_jmp_msg: .asciz "Jumping into kernel code\r\n"
@@ -70,13 +75,29 @@ bootsys_start:
 	mov DRV_NUM, %dl
 	int $0x13
 	jnc 1f
+	dec %ah /* error message with ID 1 is at index `0x0' */
+	xor %bx, %bx
+	mov %ah, %bl
+	shl %bx /* I hate that ELF cannot store arbitrary arithmetical
+		 * operations on symbol addresses and therefore we cannot
+		 * just do `$symbol * constant`. */
+	add $disk_status_table, %bx
+	mov (%bx), %si
+	mov $ERR_ATTR, %al
+	call vga_puts
+	mov $crlf, %si
+	/* character attribute not needed for CR and LF */
+	call vga_puts
 	cmp $0x2, %bp
-	je floppy_err
+	je kern_load_fail
 	inc %bp
 	xor %ah, %ah
 	int $0x13
 	jmp 1b
 1:
+	mov $load_kern_ok_msg, %si
+	mov $OK_ATTR, %al
+	call vga_puts
 
 	/*
 	 * Remap IRQs. Interrupts have been disabled in the
@@ -130,8 +151,7 @@ bootsys_start:
 	/* TODO: use named constant for selector here */
 	ljmp $0x8, $KERNEL_ORG
 
-floppy_err:
-	/* TODO: add proper error display using the floppy err table.
-	 * later, use the custom 16-bit floppy driver (if ever). */
-	cli
-	hlt
+kern_load_fail:
+	mov $load_kern_fail_msg, %si
+	mov $ERR_ATTR, %al
+	call vga_puts
