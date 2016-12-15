@@ -36,11 +36,10 @@ define(`BDA_EBDA_BASE', `0x40e') /* EBDA address = base_address:0x0 */
 .global boot_start
 
 .data
-verify_cpu: .asciz "Verifying CPU"
-cpu32: .asciz "32-bit-compatible...  ready to go"
-not_cpu32: .asciz "Not 32-bit-compatible... kernel cannot start up"
-press_key: .asciz "Press a key to reboot"
-
+verify_cpu_msg: .asciz "Verifying CPU"
+cpu32_msg: .asciz "32-bit-compatible...  ready to go"
+not_cpu32_msg: .asciz "Not 32-bit-compatible... kernel cannot start up"
+press_key_msg: .asciz "Press a key to reboot"
 kernel_too_large_msg: .asciz "The kernel is too large"
 
 sec_boot_addr:
@@ -78,7 +77,7 @@ boot_start:
 	xor %ax, %ax
 	mov %ax, %ds
 
-	mov $verify_cpu, %si
+	mov $verify_cpu_msg, %si
 	mov $DEF_ATTR, %bl
 	call puts
 
@@ -101,7 +100,7 @@ boot_start:
 	cmp %ax, %dx
 	jne no_32b
 
-	mov $cpu32, %si
+	mov $cpu32_msg, %si
 	mov $OK_ATTR, %bl
 	call puts
 
@@ -156,7 +155,7 @@ ljmp *sec_boot_addr
 
 /* TODO: change that to something more sophisticated later! */
 no_32b:
-	mov $not_cpu32, %si
+	mov $not_cpu32_msg, %si
 	mov $ERR_ATTR, %bl
 	call puts
 
@@ -167,7 +166,7 @@ floppy_err:
 	jmp reboot
 
 kernel_too_large:
-	mov $kernel_too_large, %si
+	mov $kernel_too_large_msg, %si
 	mov $ERR_ATTR, %bl
 	call puts
 
@@ -207,7 +206,7 @@ puts:
 	ret
 
 reboot:
-	mov $press_key, %si
+	mov $press_key_msg, %si
 	mov $DEF_ATTR, %bl
 	call puts
 
