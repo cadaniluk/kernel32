@@ -401,4 +401,9 @@ define(`VGA_PEL_MASK', `0x3c6') /* PEL Mask */
  * direct register descriptions as for the preceding ones, but maybe there is
  * something written in the text. */
 
+/* TODO: very narrow and specific. broaden that and make it more flexible! */
+define(`VID_SEG', `0xb800')
+define(`NUM_ROWS', `25')
+define(`NUM_COLS', `80')
+
 )

@@ -2,10 +2,6 @@
 
 include(`vga.h')
 
-define(`VID_SEG', `0xb800')
-define(`ROWS', `25')
-define(`COLUMNS', `80')
-
 .global vga_init
 .global vga_puts
 
@@ -19,7 +15,7 @@ SEC_TEXT(`.bootsys_text')
 vga_init:
 	push %ax
 
-	mov $COLUMNS << 0x1, %al
+	mov $NUM_COLS << 0x1, %al
 	mul %ah
 	mov %ax, curr_pos
 
@@ -56,10 +52,10 @@ vga_puts:
 	stosw
 	jmp 1b
 2:
-	add $COLUMNS << 0x1, %di
+	add $NUM_COLS << 0x1, %di
 	jmp 1b
 3:
-	mov $COLUMNS, %cx
+	mov $NUM_COLS, %cx
 	xor %dx, %dx
 	mov %di, %ax
 	div %cx
