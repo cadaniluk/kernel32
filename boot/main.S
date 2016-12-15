@@ -14,7 +14,7 @@ define(`DEF_ATTR', `0xf')
 
 /* TODO: maybe add some additional logging messages! */
 
-SEC_R_DATA(`.bootsys_data')
+SEC_RW_DATA(`.bootsys_data')
 .balign 8
 tmp_gdt:
 .word 0x0, 0x0, 0x0, 0x0
