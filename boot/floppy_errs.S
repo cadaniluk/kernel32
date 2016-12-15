@@ -4,7 +4,7 @@ SEC_R_DATA(`.bootsys_data')
 
 /* TODO: if the need arises, add the other error msgs as well! */
 disk_status_table:
-.long msg_1, msg_2, msg_3, msg_4, msg_8, msg_9, msg_10, msg_20, msg_40, msg_80
+.word msg_1, msg_2, msg_3, msg_4, msg_8, msg_9, msg_10, msg_20, msg_40, msg_80
 
 /* Original IBM PC Errors: */
 
