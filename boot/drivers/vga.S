@@ -6,6 +6,8 @@ include(`vga.h')
 .global vga_puts
 
 SEC_RW_DATA(`.bootsys_data')
+.balign 2
+
 curr_pos: .word 0x0
 
 SEC_TEXT(`.bootsys_text')

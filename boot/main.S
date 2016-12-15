@@ -28,6 +28,7 @@ tmp_gdtr:
 .word tmp_gdt_len /* null, code, and data */
 .int 0x0 /* to be initialized */
 
+.balign 2
 /* TODO: printing the crlf alone is pretty inefficient. it is no necessity,
  * but improving that would indeed be nice. */
 crlf: .asciz "\r\n"

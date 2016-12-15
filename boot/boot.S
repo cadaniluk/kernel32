@@ -31,6 +31,8 @@ define(`BDA_EBDA_BASE', `0x40e') /* EBDA address = base_address:0x0 */
 .global boot_start
 
 .data
+.balign 2
+
 verify_cpu_msg: .asciz "Verifying CPU"
 cpu32_msg: .asciz "32-bit-compatible...  ready to go"
 not_cpu32_msg: .asciz "Not 32-bit-compatible... kernel cannot start up"
