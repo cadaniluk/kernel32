@@ -17,7 +17,7 @@ SEC_TEXT(`.bootsys_text')
 vga_init:
 	push %ax
 
-	mov $NUM_COLS << 0x1, %al
+	mov $NUM_COLS * 2, %al
 	mul %ah
 	mov %ax, curr_pos
 
@@ -54,7 +54,7 @@ vga_puts:
 	stosw
 	jmp 1b
 2:
-	add $NUM_COLS << 0x1, %di
+	add $NUM_COLS * 2, %di
 	jmp 1b
 3:
 	mov $NUM_COLS, %cx

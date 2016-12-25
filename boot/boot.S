@@ -185,7 +185,7 @@ puts:
 	push %di
 	push %es
 
-	mov $NUM_COLS * 0x2, %al /* `* 0x2' for char + attr */
+	mov $NUM_COLS * 2, %al /* `* 2' for char + attr */
 	mulb SBP_CURR_LINE
 	mov %ax, %di
 	incb SBP_CURR_LINE
