@@ -174,8 +174,6 @@ changequote()dnl
 popdef(`arg')
 ')
 
-/* 
-
 /* Data */
 define(`VGA_CRTC_DATA', `
 pushdef(`arg', eval(`$1'))
