@@ -57,7 +57,7 @@ vga_puts:
 	add $NUM_COLS * 2, %di
 	jmp 1b
 3:
-	mov $NUM_COLS, %cx
+	mov $NUM_COLS * 2, %cx
 	xor %dx, %dx
 	mov %di, %ax
 	div %cx
