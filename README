@@ -30,6 +30,11 @@ Rules: Kernel
 7. One indentation level amounts to one tab (with preferably eight spaces).
 8. Use K&R coding style.
 
+(I might not have followed all of those myself, since the rules above have been
+created in the process of writing code. In the future, I definitely will,
+though, and I'll rectify any rule violations in my code as soon as I've
+completed the more important stuff.)
+
 Parts
 
 The whole project is split into two parts: the part responsible for booting
