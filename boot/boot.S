@@ -11,18 +11,10 @@ include(`kernel.m4')
  * occurences of SECTOR_SIZE with that dynamically determined value.
  */
 
-/* TODO: i dont like how boot_start is subtracted by 2 here. its intended to
- * serve word-alignment, but thats way too hardcoded. find something more
- * flexible to achieve the same thing. */
 /* `ss' is not simply set to `0x0' here to indicate an underflow of the stack
  * with the overflow flag (if `sp' underflows). */
 define(`BOOT_SS', `0x50') /* right after BDA */
 define(`BOOT_SP', `(BOOT_ORG - BOOT_SS * 0x10)')
-
-/* TODO: optimize the whole code! not by using subtle and hard-to-
- * detect micro-optimizations but using calls to functions,
- * for example! the apm functions, for example, can all be wrapped into
- * call functions and thus we can save valuable bootloader space. */
 
 define(`BDA_EBDA_BASE', `0x40e') /* EBDA address = base_address:0x0 */
 
