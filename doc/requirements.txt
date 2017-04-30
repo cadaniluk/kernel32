@@ -1,0 +1,6 @@
+These are the requirements to run this kernel. The kernel is still far from
+completion, so they aren't anywhere near fixed yet, though.
+
+Requirements:
+
+- 2 MiB RAM
