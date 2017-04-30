@@ -1,7 +1,42 @@
-The bootloader is loaded to physical address `0x7c00' by the BIOS.
-It loads the secondary bootloader in turn, which in turn loads the kernel.
-The secondary bootloader is loaded right below the EBDA, whose addresses is
-contained in the BDA and obtained from there by the primary bootloader.
-The kernel is located in the memory from `0x0' to the start of the secondary
-bootloader. Dynamic data structures can be allocated everywhere else, including
-high memory above 1 MiB.
+(I'm trying hard to put my ASCII graphics skills to good use here to
+depict the steps illustratively for a better understanding, so don't judge me.
+It's all for a good purpose.)
+
+1.
+The primary bootloader is loaded to physical address `0x7c00' by the BIOS.
+
+0x0  0x400 0x500 0x7c00       0x7e00
+ .-----.-----.-----v------------.
+ | IVT | BDA | ... | Primary    |
+ |     |     |     | Bootloader |
+ .-----.-----.-----^------------.
+
+2.
+The primary bootloader loads the secondary one right below the EBDA, as high
+in the first MiB as possible. The EBDA's address must be retrieved at runtime
+from the BDA, which is located at 0x400 and comprises 256 bytes.
+
+0x0  0x400 0x500 0x7c00       0x7e00
+ .-----.-----.-----.------------.-----v------------.------.
+ | IVT | BDA | ... | Primary    | ... | Secondary  | EBDA |
+ |     |     |     | Bootloader | ... | Bootloader |      |
+ .-----.-----.-----.------------.-----^------------.------.
+
+3.
+The secondary bootloader loads the kernel right after the BDA, as low as
+possible in the first MiB, so the kernel has a maximum of contiguous space
+available, ranging at most to the start of the secondary bootloader.
+
+0x0  0x400 0x500    0x7c00       0x7e00
+ .-----.-----v--------.------------.-----.------------.------.
+ | IVT | BDA | Kernel | Primary    | ... | Secondary  | EBDA |
+ |     |     |        | Bootloader | ... | Bootloader |      |
+ .-----.-----^--------.------------.-----.------------.------.
+
+And that's what memory looks like after the basic booting procedure has been
+completed. I'm pretty confident that the kernel will not get any bigger than
+the 600-ish KiBs it is currently allotted. The space above the first MiB is
+for dynamically allocated data and code like user processes or dynamic kernel
+data structures.
+TODO: change ascii graph to load kernel to 0x0 once the custom disk driver
+has been written and we can load the kernel to 0x0 without complications.
