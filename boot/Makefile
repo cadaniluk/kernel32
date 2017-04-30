@@ -5,7 +5,7 @@ M4 = m4
 M4DIR = $(ROOT)/m4
 M4DEFFILES = $(M4DIR)/global.m4 $(M4DIR)/boot.m4
 
-M4FLAGS += -I include/ -I $(M4DIR)
+M4FLAGS += -I $(ROOT)/include/ -I $(M4DIR)
 ASFLAGS += --32 -g
 LDFLAGS += -melf_i386
 

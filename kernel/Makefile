@@ -5,7 +5,7 @@ M4 = m4
 M4DIR = $(ROOT)/m4
 M4FILES = $(M4DIR)/global.m4 $(M4DIR)/kernel.m4
 
-M4FLAGS += -I $(M4DIR) -I include/
+M4FLAGS += -I $(M4DIR) -I $(ROOT)/include/
 ASFLAGS += --32 -g
 LDFLAGS += -melf_i386
 CFLAGS += -c -nostdlib -nodefaultlibs -ffreestanding -no-integrated-cpp -m32 \
