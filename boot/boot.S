@@ -43,6 +43,10 @@ boot_start:
 	/* Obtain drive number we are booting from. */
 	mov %dl, SBP_DRV_NUM
 
+	/* Copy the CRTC I/O address (0x3b4 or 0x3d4) into the parameter list. */
+	mov 0x463, %ax
+	mov %ax, SBP_CRTC_ADDR
+
 	/*
 	 * We do not need interrupts anywhere in the bootloader, so we
 	 * disable them right away.
@@ -92,12 +96,6 @@ boot_start:
 	mov $OK_ATTR, %bl
 	call puts
 
-	/*
-	 * TODO: Determine storage medium and checking validity of sector number
-	 * according to those values.
-	 */
-	/* TODO: access cmos here! */
-
 	/* Get EBDA start address and check if kernel size is OK. */
 
 	mov BDA_EBDA_BASE, %ax /* get start seg addr of EBDA */
@@ -116,9 +114,11 @@ boot_start:
 	jb kernel_too_large
 	/* `ax' still contains the start segment address. */
 	
-	/* Now, load the Real Mode part of the kernel, effectively, a
+	/*
+	 * Now, load the Real Mode part of the kernel, effectively, a
 	 * second-stage bootloader. Retry three times because the read
-	 * command does not have a time-out. */
+	 * command does not have a timeout.
+	 */
 	xor %bp, %bp
 1:
 	mov sec_boot_addr + 0x2, %ax /* EBDA seg addr (off is `0x0') */
@@ -154,7 +154,12 @@ no_32b:
 	jmp reboot
 
 floppy_err:
-	/* TODO: add better user info here! */
+	/*
+	 * The floppy error table is too large for the primary bootloader, so
+	 * we print the error code and rely on the user to find out the meaning.
+	 */
+	
+
 	jmp reboot
 
 kernel_too_large:
@@ -196,6 +201,13 @@ puts:
 	pop %ax
 
 	ret
+
+/*
+ * `ah' - number to print
+ * Prints an eight-bit number in hexadecimal notation
+ */
+putHex8:
+
 
 reboot:
 	mov $press_key_msg, %si
