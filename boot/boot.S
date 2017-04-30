@@ -1,6 +1,7 @@
 include(`sec_boot_params.h')
 include(`cmos.h')
 include(`vga.h')
+include(`kernel.m4')
 
 /*
  * TODO: add macro constant SECTOR_SIZE = 512 and replace all its former
@@ -9,9 +10,6 @@ include(`vga.h')
  * find something to determine that at runtime and use that value. replace all
  * occurences of SECTOR_SIZE with that dynamically determined value.
  */
-
-/* TODO: super ugly! rectify that! */
-include(`../kernel/m4/kernel.m4')
 
 /* TODO: i dont like how boot_start is subtracted by 2 here. its intended to
  * serve word-alignment, but thats way too hardcoded. find something more

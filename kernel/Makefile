@@ -1,12 +1,11 @@
 SHELL = /bin/bash
 ROOT = ..
 
-INCLUDE = include/
-
 M4 = m4
-M4FILES = $(ROOT)/m4/global.m4 m4/kernel.m4
+M4DIR = $(ROOT)/m4
+M4FILES = $(M4DIR)/global.m4 $(M4DIR)/kernel.m4
 
-M4FLAGS += -I $(INCLUDE)
+M4FLAGS += -I $(M4DIR) -I include/
 ASFLAGS += --32 -g
 LDFLAGS += -melf_i386
 CFLAGS += -c -nostdlib -nodefaultlibs -ffreestanding -no-integrated-cpp -m32 \
@@ -15,10 +14,10 @@ CFLAGS += -c -nostdlib -nodefaultlibs -ffreestanding -no-integrated-cpp -m32 \
 # configuration for example) you may replace march=i386 with some other value)
 
 %.o: %.c
-	$(M4) $(M4FILES) $(ROOT)/m4/c.m4 $< $(M4FLAGS) | \
+	$(M4) $(M4FILES) $(M4DIR)/c.m4 $< $(M4FLAGS) | \
 	$(CC) $(CFLAGS) -o $@ -
 %.o: %.S
-	$(M4) $(M4FILES) $(ROOT)/m4/asm.m4 $< $(M4FLAGS) | \
+	$(M4) $(M4FILES) $(M4DIR)/asm.m4 $< $(M4FLAGS) | \
 	$(AS) -o $@ $(ASFLAGS)
 
 %.ld.m4: %.ld

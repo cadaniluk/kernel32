@@ -1,21 +1,25 @@
 SHELL = /bin/bash
 ROOT = ..
 
-INCLUDE = include/
-
 M4 = m4
-M4FILES = $(ROOT)/m4/global.m4 m4/boot.m4
+M4DIR = $(ROOT)/m4
+M4DEFFILES = $(M4DIR)/global.m4 $(M4DIR)/boot.m4
 
-M4FLAGS += -I $(INCLUDE)
+M4FLAGS += -I include/ -I $(M4DIR)
 ASFLAGS += --32 -g
 LDFLAGS += -melf_i386
 
 %.o: %.S
-	$(M4) $(M4FILES) m4/asm.m4 $(ROOT)/m4/asm.m4 $< $(M4FLAGS) | \
+# Prepend ".code16" first
+	tmpfile=$(shell mktemp)
+	echo -e ".code16\n" > $tmpfile && cat $< >> $tmpfile
+
+	$(M4) $(M4DEFFILES) $(M4DIR)/asm.m4 $tmpfile $(M4FLAGS) | \
 	$(AS) -o $@ $(ASFLAGS)
+	rm $tmpfile
 
 %.ld.m4: %.ld
-	$(M4) $(M4FILES) $< $(M4FLAGS) > $@
+	$(M4) $(M4DEFFILES) $< $(M4FLAGS) > $@
 
 
 boot_objs = main.o boot.o floppy_errs.o mm_detect.o drivers/i8259A.o \

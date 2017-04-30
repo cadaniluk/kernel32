@@ -1,8 +1,7 @@
 include(`sec_boot_params.h')
 include(`i8259A.h')
 include(`mm_detect.h')
-/* TODO: super ugly! fix that! */
-include(`../kernel/m4/kernel.m4')
+include(`kernel.m4')
 
 define(`USER_INT_START', `0x20') /* first usable interrupt */
 define(`i8259A_MASTER', `0x20')
