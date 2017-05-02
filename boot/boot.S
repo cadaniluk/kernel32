@@ -11,8 +11,10 @@ include(`kernel.m4')
  * occurences of SECTOR_SIZE with that dynamically determined value.
  */
 
-/* `ss' is not simply set to `0x0' here to indicate an underflow of the stack
- * with the overflow flag (if `sp' underflows). */
+/*
+ * `ss' is not simply set to `0x0' here to indicate an underflow of the stack
+ * with the overflow flag (if `sp' underflows).
+ */
 define(`BOOT_SS', `0x50') /* right after BDA */
 define(`BOOT_SP', `(BOOT_ORG - BOOT_SS * 0x10)')
 
@@ -31,8 +33,7 @@ kernel_too_large_msg: .asciz "The kernel is too large"
 sec_boot_jmp_msg: .asciz "Jumping to the secondary bootloader"
 
 sec_boot_addr:
-.word 0x0
-.word 0x0 /* initialized later on */
+.word 0x0, 0x0 /* initialized later on */
 
 .text
 boot_start:
