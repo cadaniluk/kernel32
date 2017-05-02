@@ -1,0 +1,23 @@
+I thought a lot about setting a bitfield within a byte to a certain value:
+For a single bit:
+set -> byte | bitmask
+clear -> byte & ~bitmask
+retrieval -> byte & bitmask >> bit position
+In analogy for multiple bits:
+set -> byte & ~bitmask | (value << bit position of bitfield)
+clear -> is not needed
+retrieval -> byte & bitmask >> bit position
+Conclusion: we supply bitmask and bit position of the bitfield and
+the user can do whatever she/he wants...
+IN THEORY. We can also just supply the bitmask and let an m4 macro
+calculate the bit position. I did not start using m4 for nothing.
+
+I found the above in a VGA include file. Apparently I thought about effective
+bitmasking!
+We currently have the `BIT_POS' macro in m4/asm.m4, which helps us do exactly
+what is mentioned at the end of the text above. m4 calculates the bit position
+and we can easily set and clear bits.
+
+I want to try to use the scheme explained above consistently throughout all
+kernel files. Should I ever need something more sophisticated, I am going to
+build something new, but the scheme employed at the moment suffices.

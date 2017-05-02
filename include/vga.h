@@ -28,22 +28,6 @@ popdef(`arg')dnl
 ifelse(`$#', `1', , ` | _VGA_MAP_BITS(shift($@))')dnl
 ')')
 
-/*
- * I thought a lot about setting a bitfield within a byte to a certain value:
- * For a single bits:
- * set -> byte | bitmask
- * clear -> byte & ~bitmask
- * retrieval -> byte & bitmask >> bit position
- * In analogy for multiple bits:
- * set -> byte & ~bitmask | (value << bit position of bitfield)
- * clear -> is not needed
- * retrieval -> byte & bitmask >> bit position
- * Conclusion: we supply bitmask and bit position of the bitfield and
- * the user can do whatever she/he wants...
- * IN THEORY. We can also just supply the bitmask and let an m4 macro
- * calculate the bit position. I did not start using m4 for nothing.
- */
-
 /* General Registers: */
 
 define(`VGA_MISC_OUT_RD', `0x3cc') /* Miscellaneous Output Register Read */
