@@ -20,6 +20,8 @@ define(`BOOT_SP', `(BOOT_ORG - BOOT_SS * 0x10)')
 
 define(`BDA_EBDA_BASE', `0x40e') /* EBDA address = base_address:0x0 */
 
+define(`VGA_IOS_VALUE', `0') /* determines CRTC register I/O address */
+
 .global boot_start
 
 .data
@@ -44,9 +46,21 @@ boot_start:
 	/* Obtain drive number we are booting from. */
 	mov %dl, SBP_DRV_NUM
 
-	/* Copy the CRTC I/O address (0x3b4 or 0x3d4) into the parameter list. */
-	mov 0x463, %ax
-	mov %ax, SBP_CRTC_ADDR
+	/*
+	 * Set the IOS bit of the Miscellaneous Output Register of the CRTC.
+	 * Instead of retrieving it and using that retrieved value we set it
+	 * explicitly, so we know the addresses already at compile time. I cannot
+	 * see any penalty in setting it manually.
+	 */
+	mov $VGA_MISC_OUT_RD, %dx
+	in %dx, %al
+ifelse(VGA_IOS_VALUE, `0', `dnl
+	and $~0x1 << BIT_POS(VGA_IOS), %al
+', `dnl
+	or $0x1 << BIT_POS(VGA_IOS), %al
+')dnl
+	mov $VGA_MISC_OUT_WR, %dx
+	out %al, %dx
 
 	/*
 	 * We do not need interrupts anywhere in the bootloader, so we
