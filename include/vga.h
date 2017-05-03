@@ -146,29 +146,29 @@ define(`VGA_EM', `0x2') /* Extended Memory */
 /* CRT Controller Registers: */
 
 /* Address */
-define(`VGA_CRTC_ADDR', `
-pushdef(`arg', eval(`$1'))
-ifelse(eval(arg` == 0 || 'arg` == 1'), `1',
-`(0x3b4 ^ ('arg` << 6 | 'arg` << 5))',
+define(`VGA_CRTC_ADDR', `dnl
+pushdef(`arg', eval(`$1'))dnl
+ifelse(eval(arg` == 0 || 'arg` == 1'), `1',dnl
+`(0x3b4 ^ ('arg` << 6 | 'arg` << 5))',dnl
 `errprint(`Argument is not `0' or `1' but 'dnl
 changequote([,])dnl
 `arg'dnl
 changequote()dnl
-`.')')
-popdef(`arg')
+`.')')dnl
+popdef(`arg')dnl
 ')
 
 /* Data */
-define(`VGA_CRTC_DATA', `
-pushdef(`arg', eval(`$1'))
-ifelse(eval(arg` == 0 || 'arg` == 1'), `1',
-`(0x3b5 ^ ('arg` << 6 | 'arg` << 5))',
+define(`VGA_CRTC_DATA', `dnl
+pushdef(`arg', eval(`$1'))dnl
+ifelse(eval(arg` == 0 || 'arg` == 1'), `1',dnl
+`(0x3b5 ^ ('arg` << 6 | 'arg` << 5))',dnl
 `errprint(`Argument is not `0' or `1' but 'dnl
 changequote([,])dnl
 `arg'dnl
 changequote()dnl
-`.')')
-popdef(`arg')
+`.')')dnl
+popdef(`arg')dnl
 ')
 
 
