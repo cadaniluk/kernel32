@@ -20,12 +20,16 @@ define(`BOOT_SP', `(BOOT_ORG - BOOT_SS * 0x10)')
 
 define(`BDA_EBDA_BASE', `0x40e') /* EBDA address = base_address:0x0 */
 
-define(`VGA_IOS_VALUE', `0') /* determines CRTC register I/O address */
+define(`VGA_IOS_VALUE', `1') /* determines CRTC register I/O address */
 
 .global boot_start
 
 .data
 .balign 2
+
+/* Stores the current cursor location. */
+cursor_loc:
+.word 0x0
 
 verify_cpu_msg: .asciz "Verifying CPU"
 cpu32_msg: .asciz "32-bit-compatible...  ready to go"
@@ -210,6 +214,28 @@ puts:
 	stosw
 	jmp 1b
 2:
+	/* Write back the location to main memory. */
+	shr %di
+	mov %di, cursor_loc
+
+	/*
+	 * Update the cursor location. Note that x86 is little-endian, so we need to
+	 * load the single bytes in reverse into the CRTC registers.
+	 */
+	mov $VGA_CRTC_ADDR(VGA_IOS_VALUE), %dx
+	mov $VGA_CLOC_LO, %al
+	out %al, %dx
+	mov $VGA_CRTC_DATA(VGA_IOS_VALUE), %dx
+	mov cursor_loc, %al
+	out %al, %dx
+
+	mov $VGA_CRTC_ADDR(VGA_IOS_VALUE), %dx
+	mov $VGA_CLOC_HI, %al
+	out %al, %dx
+	mov $VGA_CRTC_DATA(VGA_IOS_VALUE), %dx
+	mov cursor_loc + 0x1, %al
+	out %al, %dx
+
 	pop %es
 	pop %di
 	pop %si
