@@ -32,11 +32,14 @@ cursor_loc:
 .word 0x0
 
 verify_cpu_msg: .asciz "Verifying CPU"
-cpu32_msg: .asciz "32-bit-compatible...  ready to go"
-not_cpu32_msg: .asciz "Not 32-bit-compatible... kernel cannot start up"
+cpu32_msg: .asciz "32-bit compatible"
+not_cpu32_msg: .asciz "32-bit incompatible"
 press_key_msg: .asciz "Press a key to reboot"
-kernel_too_large_msg: .asciz "The kernel is too large"
-sec_boot_jmp_msg: .asciz "Jumping to the secondary bootloader"
+kernel_too_large_msg: .asciz "Kernel too large"
+sec_boot_jmp_msg: .asciz "Jumping to secondary bootloader"
+disk_err_msg: .ascii "Disk operation failed (code 0x"
+disk_code: .ascii "cc"
+.asciz ")"
 
 sec_boot_addr:
 .word 0x0, 0x0 /* initialized later on */
@@ -132,7 +135,7 @@ ifelse(VGA_IOS_VALUE, `0', `dnl
 	cmp $KERNEL_SECTORS << 0x5, %dx /* shift does sectors -> paragraphs */
 	jb kernel_too_large
 	/* `ax' still contains the start segment address. */
-	
+
 	/*
 	 * Now, load the Real Mode part of the kernel, effectively, a
 	 * second-stage bootloader. Retry three times because the read
