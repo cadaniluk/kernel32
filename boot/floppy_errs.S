@@ -16,7 +16,7 @@ msg_3: .asciz "Disk Write-Protected"
 msg_4: .asciz "Sector Not Found"
 msg_8: .asciz "DMA Overrun"
 msg_9: .asciz "Data Boundary Error" /* attempted DMA across 64K boundary or
-                                      * > 0x80 sectors */
+                                     * > 0x80 sectors */
 msg_10: .asciz "Uncorrectable CRC or ECC Error on Read"
 msg_20: .asciz "Controller Failure"
 msg_40: .asciz "Seek Failed"
@@ -34,7 +34,7 @@ ifelse(`
 
 msg_5: .asciz "Reset Failed"
 /* .asciz "Data Verified Incorrectly" /* TODO: only for TIPC, so find a way
-				       * to differentiate both msg_s!  or just
+                                       * to differentiate both msg_s!  or just
                                        * remove it because nobody has a tipc! */
 msg_7: .asciz "Drive Parameter Activity Failed"
 msg_a: .asciz "Bad Sector Detected"
