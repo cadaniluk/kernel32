@@ -154,7 +154,7 @@ ifelse(VGA_IOS_VALUE, `0', `dnl
 	int $0x13
 	jnc 1f
 	cmp $0x2, %bp
-	je floppy_err
+	je disk_err
 	inc %bp
 	xor %ah, %ah
 	int $0x13
@@ -175,12 +175,18 @@ no_32b:
 
 	jmp reboot
 
-floppy_err:
+disk_err:
 	/*
-	 * The floppy error table is too large for the primary bootloader, so
+	 * The disk error table is too large for the primary bootloader, so
 	 * we print the error code and rely on the user to find out the meaning.
 	 */
-	
+	xor %bx, %bx
+	mov %bx, %es
+	mov $disk_code, %di
+	call putx8
+	mov $disk_err_msg, %si
+	mov $ERR_ATTR, %bl
+	call puts
 
 	jmp reboot
 
@@ -247,11 +253,42 @@ puts:
 	ret
 
 /*
- * `ah' - number to print
- * Prints an eight-bit number in hexadecimal notation
+ * `ah' - number to print (disk routines return the error code in `ah')
+ * `ds:si' - 16-bit memory location to write the result to
+ * Converts an eight-bit hexadecimal number to ASCII and writes it to a 16-bit
+ * memory location.
  */
-putHex8:
+putx8:
+	push %ax
+	push %cx
+	push %di
 
+	/*
+	 * The conversion to hexadecimal ASCII is basically the same as
+	 * n += (n <= 9 ? 30 : 51);
+	 */
+	shr $0x4, %ax
+	shr $0x4, %al
+	mov $0x2, %cx
+1:
+	xchg %al, %ah
+	cmp $0x9, %al
+	jae 2f
+	add $0x30, %al	/* to digit */
+	jmp 3f
+2:
+	add $0x57, %al	/* to letter */
+3:
+	dec %cx
+	jnz 1b
+
+	xchg %al, %ah
+	stosw
+
+	pop %di
+	pop %cx
+	pop %ax
+	ret
 
 reboot:
 	mov $press_key_msg, %si
