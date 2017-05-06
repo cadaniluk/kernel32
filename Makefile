@@ -28,8 +28,10 @@ all: image.img
 image.img: boot.img kernel.img
 	rm -f image.img
 	bximage -mode=create -fd=1.44M -q image.img
+# TODO: replace count with BOOTSYS_SECTORS+1 (for prim. bootloader)!!!!!!
 	dd if=boot.img of=image.img bs=512 count=4 conv=notrunc
-	dd if=kernel.img of=image.img bs=512 count=1 seek=4 conv=notrunc
+# TODO: replace count with KERNEL_SECTORS!!!!!
+	dd if=kernel.img of=image.img bs=512 count=8 seek=4 conv=notrunc
 
 boot.img: boot.out
 
