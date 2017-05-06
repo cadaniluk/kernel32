@@ -27,7 +27,6 @@ kernel_start:
 	mov %ax, %ds
 
 	lgdt gdtr
-	lidt idtr
 	ljmp $C0_SEL, $1f
 1:
 	mov $D0_SEL, %ax
@@ -39,6 +38,7 @@ kernel_start:
 	mov %ax, %ss
 	mov $0x70000, %esp
 
+	lidt idtr
 	call idt_init
 
 	cli
