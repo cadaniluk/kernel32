@@ -1,6 +1,7 @@
 include(`sec_boot_params.h')
 include(`i8259A.h')
 include(`mm_detect.h')
+include(`descr.h')
 include(`kernel.m4')
 
 define(`USER_INT_START', `0x20') /* first usable interrupt */
@@ -148,8 +149,7 @@ bootsys_start:
 	or $0x1, %ax
 	lmsw %ax
 
-	/* TODO: use named constant for selector here */
-	ljmp $0x8, $KERNEL_ORG
+	ljmp $C0_SEL, $KERNEL_ORG
 
 kern_load_fail:
 	mov $load_kern_fail_msg, %si

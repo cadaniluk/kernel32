@@ -6,6 +6,11 @@ define(`IDT_SIZE', `0x100')
 
 define(`DESCR_SIZE', `0x8')
 
+define(`C0_SEL', `0x8')
+define(`D0_SEL', `0x10')
+define(`C3_SEL', `0x18')
+define(`D3_SEL', `0x20')
+
 ifdef(`__ASSEMBLER__',, `
 
 include(`basetypes.h')

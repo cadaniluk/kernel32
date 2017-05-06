@@ -23,16 +23,14 @@ kernel_start:
  * symbols. It's just easier to reload the GDTR register at a negligible
  * performance cost.
  */
-
-/* TODO: replace 0x8 and 0x10 selectors with something not as hard-wired */
 	mov $0x10, %ax
 	mov %ax, %ds
 
 	lgdt gdtr
 	lidt idtr
-	ljmp $0x8, $1f
+	ljmp $C0_SEL, $1f
 1:
-	mov $0x10, %ax
+	mov $D0_SEL, %ax
 	mov %ax, %ds
 	mov %ax, %es
 	mov %ax, %fs
