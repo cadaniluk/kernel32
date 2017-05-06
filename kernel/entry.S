@@ -4,11 +4,6 @@ include(`descr.h')
 
 .data
 
-.balign 8
-idt:
-.skip 0x8 * 0x10 /* TODO: replace with descriptors! */
-.set idt_len, . - idt
-
 .balign 2
 gdtr:
 .word GDT_SIZE * DESCR_SIZE
@@ -16,7 +11,7 @@ gdtr:
 
 .balign 2
 idtr:
-.word idt_len
+.word IDT_SIZE * DESCR_SIZE
 .int idt
 
 
@@ -42,6 +37,11 @@ kernel_start:
 	mov %ax, %es
 	mov %ax, %fs
 	mov %ax, %gs
+
+	mov %ax, %ss
+	mov $0x70000, %esp
+
+	call idt_init
 
 	cli
 	hlt

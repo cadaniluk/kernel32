@@ -23,7 +23,8 @@ CFLAGS += -c -nostdlib -nodefaultlibs -ffreestanding -no-integrated-cpp -m32 \
 %.ld.m4: %.ld
 	$(M4) $(M4FILES) $< $(M4FLAGS) > $@
 
-kernel_objs = entry.o drivers/vga.o descr.o
+kernel_objs = entry.o drivers/vga.o descr.o exceptions/faults.o \
+exceptions/traps.o exceptions/aborts.o
 
 all: $(ROOT)/kernel.out
 

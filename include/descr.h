@@ -2,6 +2,8 @@ ifdef(`DESCR_H',, `
 define(`DESCR_H')
 
 define(`GDT_SIZE', `0x10')
+define(`IDT_SIZE', `0x100')
+
 define(`DESCR_SIZE', `0x8')
 
 ifdef(`__ASSEMBLER__',, `
@@ -11,34 +13,36 @@ include(`basetypes.h')
 typedef uint64_t descr_t;
 
 extern descr_t gdt[] __attribute__((aligned(8)));
+extern descr_t idt[] __attribute__((aligned(8)));
 
 /*
- * Generates a general descriptor to be inserted into GDT or LDT.
+ * Initialize the IDT at runtime, not at compile time as is the case with the
+ * GDT because of reasons uttered in kernel/descr.c.
+ */
+void init_idt(void);
+
+/*
+ * Generates a code or data descriptor to be inserted into GDT or LDT.
  * `$1' - 32-bit segment base address
  * `$2' - 20-bit segment limit (meaning depends on granularity flag)
- * `$3' - Descriptor type
- * `$4' - Segment type
- * `$5' - Present flag
- * `$6' - DPL (Descriptor Privilege Level)
- * `$7' - D/B flag (meaning depends on segment type)
- * `$8' - Granularity flag
+ * `$3' - Segment type
+ * `$4' - Present flag
+ * `$5' - DPL (Descriptor Privilege Level)
+ * `$6' - D/B flag (meaning depends on segment type)
+ * `$7' - Granularity flag
  */
-define(`MK_DESCR', `dnl
+define(`MK_CD_DESCR', `dnl
 ((descr_t) (($1) & 0xff000000) << 32) | dnl
-((descr_t) ($8) << 55) | dnl
-((descr_t) ($7) << 54) | dnl
+((descr_t) ($7) << 55) | dnl
+((descr_t) ($6) << 54) | dnl
 ((descr_t) (($2) & 0xf0000) << 32) | dnl
-((descr_t) ($5) << 47) | dnl
-((descr_t) ($6) << 45) | dnl
-((descr_t) ($3) << 44) | dnl
-((descr_t) ($4) << 40) | dnl
+((descr_t) ($4) << 47) | dnl
+((descr_t) ($5) << 45) | dnl
+((descr_t) 0x1 << 44) | dnl
+((descr_t) ($3) << 40) | dnl
 ((descr_t) (($1) & 0xffffff) << 16) | dnl
 ((descr_t) ($2) & 0xffff)dnl
 ')
-
-/* Descriptor type: */
-define(`SYS_DESCR', `0')
-define(`CD_DESCR', `1')
 
 /*
  * Segment type:
@@ -77,6 +81,56 @@ define(`GRANUL_4KiB', `1')
 /* Present: */
 define(`SEG_NOT_PRESENT', `0')
 define(`SEG_PRESENT', `1')
+
+
+/*
+ * `$1' - TSS segment selector
+ * `$2' - DPL
+ * `$3' - Present flag
+ */
+define(`MK_TASKG_DESCR', `dnl
+((descr_t) ($3) << 47) | dnl
+((descr_t) ($2) << 45) | dnl
+((descr_t) 0x5 << 40) | dnl
+((descr_t) ($1) << 16)dnl
+')
+
+/*
+ * `$1' - Offset to ISR
+ * `$2' - Segment selector
+ * `$3' - 16-bit (0) or 32-bit (1) gate
+ * `$4' - DPL
+ * `$5' - Present flag
+ */
+define(`MK_INTG_DESCR', `
+((descr_t) (($1) & 0xffff0000) << 48) | dnl
+((descr_t) ($5) << 47) | dnl
+((descr_t) ($4) << 45) | dnl
+((descr_t) ($3) << 43) | dnl
+((descr_t) 0x3 << 41) | dnl
+((descr_t) ($2) << 16) | dnl
+((descr_t) (($1) & 0xffff))dnl
+')
+
+/*
+ * `$1' - Offset to trap handler
+ * `$2' - Segment selector
+ * `$3' - 16-bit (0) or 32-bit (1) gate
+ * `$4' - DPL
+ * `$5' - Present flag
+ */
+define(`MK_TRAPG_DESCR', `
+((descr_t) (($1) & 0xffff0000) << 48) | dnl
+((descr_t) ($5) << 47) | dnl
+((descr_t) ($4) << 45) | dnl
+((descr_t) ($3) << 43) | dnl
+((descr_t) 0x3 << 41) | dnl
+((descr_t) ($2) << 16) | dnl
+((descr_t) (($1) & 0xffff))dnl
+')
+
+define(`GATE_16', `0')
+define(`GATE_32', `1')
 
 ') /* __ASSEMBLER__ */
 
