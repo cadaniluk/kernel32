@@ -6,7 +6,6 @@ descr_t gdt[GDT_SIZE] = {
 		0x0,
 		0xffffff,
 		MK_SEGTYPE(SEG_CODE, R_OR_W_ON, EUP_OR_NONCONFORM),
-		SEG_PRESENT,
 		0,
 		SEG_32,
 		GRANUL_4KiB
@@ -15,7 +14,6 @@ descr_t gdt[GDT_SIZE] = {
 		0x0,
 		0xffffff,
 		MK_SEGTYPE(SEG_DATA, R_OR_W_ON, EUP_OR_NONCONFORM),
-		SEG_PRESENT,
 		0,
 		SEG_32,
 		GRANUL_4KiB
@@ -24,7 +22,6 @@ descr_t gdt[GDT_SIZE] = {
 		0x0,
 		0xffffff,
 		MK_SEGTYPE(SEG_CODE, R_OR_W_ON, EUP_OR_NONCONFORM),
-		SEG_PRESENT,
 		3,
 		SEG_32,
 		GRANUL_4KiB
@@ -33,7 +30,6 @@ descr_t gdt[GDT_SIZE] = {
 		0x0,
 		0xffffff,
 		MK_SEGTYPE(SEG_DATA, R_OR_W_ON, EUP_OR_NONCONFORM),
-		SEG_PRESENT,
 		3,
 		SEG_32,
 		GRANUL_4KiB
@@ -86,13 +82,13 @@ void idt_init(void)
 	unsigned int i = 0, j = 0;
 
 	for ( ; i < DESCR_COUNT1; ++i, ++j)
-		idt[i] = MK_INTG_DESCR(addrs[j], C0_SEL, GATE_32, 0, 1);
+		idt[i] = MK_INTG_DESCR(addrs[j], C0_SEL, GATE_32, 0);
 	
 	/* Skip vector 0x2 (NMI). */
 	for (++i; i < DESCR_COUNT2; ++i, ++j)
-		idt[i] = MK_INTG_DESCR(addrs[j], C0_SEL, GATE_32, 0, 1);
+		idt[i] = MK_INTG_DESCR(addrs[j], C0_SEL, GATE_32, 0);
 	
 	/* Skip vector 0xe (reserved). */
 	for (++i; i < DESCR_COUNT3; ++i, ++j)
-		idt[i] = MK_INTG_DESCR(addrs[j], C0_SEL, GATE_32, 0, 1);
+		idt[i] = MK_INTG_DESCR(addrs[j], C0_SEL, GATE_32, 0);
 }

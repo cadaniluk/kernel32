@@ -31,18 +31,17 @@ void init_idt(void);
  * `$1' - 32-bit segment base address
  * `$2' - 20-bit segment limit (meaning depends on granularity flag)
  * `$3' - Segment type
- * `$4' - Present flag
  * `$5' - DPL (Descriptor Privilege Level)
  * `$6' - D/B flag (meaning depends on segment type)
  * `$7' - Granularity flag
  */
 define(`MK_CD_DESCR', `dnl
 ((descr_t) (($1) & 0xff000000) << 32) | dnl
-((descr_t) ($7) << 55) | dnl
-((descr_t) ($6) << 54) | dnl
+((descr_t) ($6) << 55) | dnl
+((descr_t) ($5) << 54) | dnl
 ((descr_t) (($2) & 0xf0000) << 32) | dnl
-((descr_t) ($4) << 47) | dnl
-((descr_t) ($5) << 45) | dnl
+((descr_t) 0x1 << 47) | dnl
+((descr_t) ($4) << 45) | dnl
 ((descr_t) 0x1 << 44) | dnl
 ((descr_t) ($3) << 40) | dnl
 ((descr_t) (($1) & 0xffffff) << 16) | dnl
@@ -83,18 +82,12 @@ define(`SEG_32', `1')
 define(`GRANUL_BYTE', `0')
 define(`GRANUL_4KiB', `1')
 
-/* Present: */
-define(`SEG_NOT_PRESENT', `0')
-define(`SEG_PRESENT', `1')
-
-
 /*
  * `$1' - TSS segment selector
  * `$2' - DPL
- * `$3' - Present flag
  */
 define(`MK_TASKG_DESCR', `dnl
-((descr_t) ($3) << 47) | dnl
+((descr_t) 0x1 << 47) | dnl
 ((descr_t) ($2) << 45) | dnl
 ((descr_t) 0x5 << 40) | dnl
 ((descr_t) ($1) << 16)dnl
@@ -105,11 +98,10 @@ define(`MK_TASKG_DESCR', `dnl
  * `$2' - Segment selector
  * `$3' - 16-bit (0) or 32-bit (1) gate
  * `$4' - DPL
- * `$5' - Present flag
  */
 define(`MK_INTG_DESCR', `
 ((descr_t) (($1) & 0xffff0000) << 48) | dnl
-((descr_t) ($5) << 47) | dnl
+((descr_t) 0x1 << 47) | dnl
 ((descr_t) ($4) << 45) | dnl
 ((descr_t) ($3) << 43) | dnl
 ((descr_t) 0x3 << 41) | dnl
@@ -122,11 +114,10 @@ define(`MK_INTG_DESCR', `
  * `$2' - Segment selector
  * `$3' - 16-bit (0) or 32-bit (1) gate
  * `$4' - DPL
- * `$5' - Present flag
  */
 define(`MK_TRAPG_DESCR', `
 ((descr_t) (($1) & 0xffff0000) << 48) | dnl
-((descr_t) ($5) << 47) | dnl
+((descr_t) 0x1 << 47) | dnl
 ((descr_t) ($4) << 45) | dnl
 ((descr_t) ($3) << 43) | dnl
 ((descr_t) 0x3 << 41) | dnl
