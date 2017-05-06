@@ -1,19 +1,8 @@
+include(`descr.h')
+
 .global kernel_start
 
 .data
-/*
- * Technically, we don't need to reload the GDTR register. However, booting
- * system and kernel are strictly kept apart and so are their addresses and
- * symbols. It's just easier to reload the GDTR register at a negligible
- * performance cost.
- */
-.balign 8
-gdt:
-.word 0x0, 0x0, 0x0, 0x0
-.word 0xffff, 0x0, 0x9800, 0xcf /* ring 0 code */
-.word 0xffff, 0x0, 0x9200, 0xcf /* ring 0 data */
-.skip 0x8 * 0x10 - (. - gdt)
-.set gdt_len, . - gdt
 
 .balign 8
 idt:
@@ -22,7 +11,7 @@ idt:
 
 .balign 2
 gdtr:
-.word gdt_len
+.word GDT_SIZE * DESCR_SIZE
 .int gdt
 
 .balign 2
@@ -33,6 +22,14 @@ idtr:
 
 .text
 kernel_start:
+/*
+ * Technically, we don't need to reload the GDTR register. However, booting
+ * system and kernel are strictly kept apart and so are their addresses and
+ * symbols. It's just easier to reload the GDTR register at a negligible
+ * performance cost.
+ */
+
+/* TODO: replace 0x8 and 0x10 selectors with something not as hard-wired */
 	mov $0x10, %ax
 	mov %ax, %ds
 
