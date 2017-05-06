@@ -60,7 +60,7 @@ extern uint32_t addrs[];
 __asm__(
 	".data\t\n"
 	"addrs:\t\n"
-	".long ex_divide, ex_debug, ex_breakpoint, ex_overflow, ex_beyond_range, "
+	".long ex_div0, ex_debug, ex_breakpoint, ex_overflow, ex_beyond_range, "
 	"ex_bad_opcode, ex_no_fpu, ex_double_fault, ex_fpu_seg_overrun,"
 	"ex_bad_tss, ex_seg_not_present, ex_ss_fault, ex_general_prot,"
 	"ex_page_fault, ex_fpu_float_error, ex_align_check, ex_machine_check,"

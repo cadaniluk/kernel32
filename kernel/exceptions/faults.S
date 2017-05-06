@@ -1,11 +1,11 @@
 /* Faults push the address of the instruction the trap was fired at. */
 
-.global ex_divide, ex_beyond_range, ex_bad_opcode, ex_no_fpu,
+.global ex_div0, ex_beyond_range, ex_bad_opcode, ex_no_fpu,
 .global ex_fpu_seg_overrun, ex_bad_tss, ex_seg_not_present, ex_ss_fault
 .global ex_general_prot, ex_page_fault, ex_fpu_float_error, ex_align_check
 .global ex_simd_float, ex_virtual
 
-ex_divide:
+ex_div0:
 	iret
 
 ex_beyond_range:
