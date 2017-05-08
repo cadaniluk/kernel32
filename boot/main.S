@@ -2,6 +2,7 @@ include(`sec_boot_params.h')
 include(`i8259A.h')
 include(`mm_detect.h')
 include(`descr.h')
+include(`crn.h')
 include(`kernel.m4')
 
 define(`USER_INT_START', `0x20') /* first usable interrupt */
@@ -146,7 +147,7 @@ bootsys_start:
 	call vga_puts
 
 	smsw %ax
-	or $0x1, %ax
+	or $CR0_PE, %ax
 	lmsw %ax
 
 	ljmp $C0_SEL, $KERNEL_ORG
