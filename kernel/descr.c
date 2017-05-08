@@ -67,6 +67,18 @@ __asm__(
 	"ex_simd_float, ex_virtual"
 );
 
+/*
+ * A dummy ISR for all user-defined interrupts that do not have their own
+ * ISR.
+ */
+extern uint32_t isr_dummy_addr;
+__asm__(
+	".text\t\n"
+	"isr_dummy: iret\t\n"
+	".data\t\n"
+	"isr_dummy_addr: .long isr_dummy"
+);
+
 define(`DESCR_COUNT1', `2')
 define(`DESCR_COUNT2', `12')
 define(`DESCR_COUNT3', `5')
@@ -91,4 +103,10 @@ void idt_init(void)
 	/* Skip vector 0xe (reserved). */
 	for (++i; i < DESCR_COUNT3; ++i, ++j)
 		idt[i] = MK_INTG_DESCR(addrs[j], C0_SEL, GATE_32, 0);
+	
+/* TODO: add isr initialization. */
+
+	/* Start at user-defined interrupts. */
+	for (i = 0x20; i < IDT_SIZE; ++i)
+		idt[i] = MK_INTG_DESCR(isr_dummy_addr, C0_SEL, GATE_32, 0);
 }
