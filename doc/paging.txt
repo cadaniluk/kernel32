@@ -1,0 +1,7 @@
+Paging is currently not used. The reason is that, while I know how paging works,
+I do not have the expertise to implement it. I will have to read a lot of
+paging code and the Intel manual for that.
+I do not consider that a problem, though: it provides a good opportunity for me
+to gather expertise in setting up segmentation and working with it. I also
+can concentrate on task management alone; I do not need to bother with other
+things like paging and virtual memory.
