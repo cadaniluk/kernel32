@@ -5,11 +5,10 @@ define(`i8259A_H')
  * # COMMON I/O PORTS: #
  * ##################### */
 
-/* None of the original IBM PCs had more than two PICs but I don't think
- * it's prohibited to have more on an x86 machine. Therefore, I wrote the
- * driver to be compliant for an arbitrary number of PICs, without being
- * restricted to just one master and one slave.
- * Every Intel 8259A chip in the system requires separate initialization. */
+define(`i8259A_SLAVE', `0x20')
+define(`i8259A_MASTER', `0xa0')
+
+define(`USER_INT_START', `0x20')
 
 /* #########
  * # ICW1: #

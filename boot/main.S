@@ -5,10 +5,6 @@ include(`descr.h')
 include(`crn.h')
 include(`kernel.m4')
 
-define(`USER_INT_START', `0x20') /* first usable interrupt */
-define(`i8259A_MASTER', `0x20')
-define(`i8259A_SLAVE', `0xa0')
-
 define(`DEF_ATTR', `0xf')
 
 .global bootsys_start
