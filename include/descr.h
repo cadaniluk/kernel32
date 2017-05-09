@@ -31,9 +31,9 @@ void init_idt(void);
  * `$1' - 32-bit segment base address
  * `$2' - 20-bit segment limit (meaning depends on granularity flag)
  * `$3' - Segment type
- * `$5' - DPL (Descriptor Privilege Level)
- * `$6' - D/B flag (meaning depends on segment type)
- * `$7' - Granularity flag
+ * `$4' - DPL (Descriptor Privilege Level)
+ * `$5' - D/B flag (meaning depends on segment type)
+ * `$6' - Granularity flag
  */
 define(`MK_CD_DESCR', `dnl
 ((descr_t) (($1) & 0xff000000) << 32) | dnl
