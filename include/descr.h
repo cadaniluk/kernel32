@@ -128,6 +128,24 @@ define(`MK_TRAPG_DESCR', `
 define(`GATE_16', `0')
 define(`GATE_32', `1')
 
+/*
+ * Generates a TSS descriptor.
+ * `$1' - 32-bit segment base address
+ * `$2' - 20-bit segment limit (meaning depends on granularity flag)
+ * `$3' - DPL (Descriptor Privilege Level)
+ * `$4' - Granularity flag
+ */
+define(`MK_TSS_DESCR', `dnl
+((descr_t) (($1) & 0xff000000) << 32) | dnl
+((descr_t) ($4) << 55) | dnl
+((descr_t) (($2) & 0xf0000) << 32) | dnl
+((descr_t) 0x1 << 47) | dnl
+((descr_t) ($3) << 45) | dnl
+((descr_t) 0x9 << 40) | dnl
+((descr_t) (($1) & 0xffffff) << 16) | dnl
+((descr_t) ($2) & 0xffff)dnl
+')
+
 ') /* __ASSEMBLER__ */
 
 ') /* DESCR_H */
