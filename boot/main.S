@@ -76,9 +76,11 @@ bootsys_start:
 	dec %ah /* error message with ID 1 is at index `0x0' */
 	xor %bx, %bx
 	mov %ah, %bl
-	shl %bx /* I hate that ELF cannot store arbitrary arithmetical
-		 * operations on symbol addresses and therefore we cannot
-		 * just do `$symbol * constant`. */
+	shl %bx /*
+             * I hate that ELF cannot store arbitrary arithmetical
+             * operations on symbol addresses and therefore we cannot
+             * just do `$symbol * constant`.
+             */
 	add $disk_status_table, %bx
 	mov (%bx), %si
 	mov $ERR_ATTR, %al
