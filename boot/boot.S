@@ -75,6 +75,12 @@ ifelse(VGA_IOS_VALUE, `0', `dnl
 	 */
 	cli
 
+	/*
+	 * Upward direction is the default and does not change throughou the
+	 * whole booting process.
+	 */
+	cld
+
 	/* Set up a basic stack. */
 	mov $BOOT_SS, %ax /* Stack segment points to right after the BDA */
 	mov %ax, %ss
