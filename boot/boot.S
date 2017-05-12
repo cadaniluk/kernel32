@@ -148,15 +148,15 @@ ifelse(VGA_IOS_VALUE, `0', `dnl
 	 * command does not have a timeout.
 	 */
 	xor %bp, %bp
-1:
 	mov sec_boot_addr + 0x2, %ax /* EBDA seg addr (off is `0x0') */
 	mov %ax, %es
 	xor %bx, %bx
-	mov $0x200 | BOOTSYS_SECTORS, %ax
 	mov $(LBA_TO_C(HEADS, SECTORS, BOOTSYS_LBA) << 0x8) | dnl
 	LBA_TO_S(HEADS, SECTORS, BOOTSYS_LBA), %cx
 	mov $(LBA_TO_H(HEADS, SECTORS, BOOTSYS_LBA) << 0x8), %dh
 	mov SBP_DRV_NUM, %dl
+1:
+	mov $0x200 | BOOTSYS_SECTORS, %ax
 	int $0x13
 	jnc 1f
 	cmp $0x2, %bp

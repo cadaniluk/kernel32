@@ -10,14 +10,12 @@ define(`E820_RESERVED', `0x2')
 define(`E820_ACPI_RECLAIM', `0x3')
 define(`E820_ACPI_NVS', `0x4')
 
-
 define(`E820_MAX_ENTRIES', `0x20')
+define(`E820_ENTRY_LEN', `0x14')
 
-define(`E820_BASE_ADDR_LEN', `0x8')
-define(`E820_LEN_LEN', `0x8')
-define(`E820_TYPE_LEN', `0x4')
-define(`E820_ENTRY_LEN', `((E820_BASE_ADDR_LEN + E820_LEN_LEN + dnl
-E820_TYPE_LEN))')
+define(`E820_BASE_ADDR', `0x0')
+define(`E820_LEN', `0x8')
+define(`E820_TYPE', `0x10')
 
 define(`E820_SUCCESS', `0x0') /* success (must be zero) */
 define(`E820_TOO_MANY', `0x1') /* too many entries */

@@ -1,55 +1,78 @@
+/*
+ * This is one of the few (if not the only) header file, where I got major ideas
+ * from the Linux source code. The code is entirely self-written, like EVERY 
+ * other line of the project, but some BIOS inconsistencies can only be found
+ * out through a lot of testing, for example. I do not have the resources for
+ * that; Linux has.
+ */
+
 include(`mm_detect.h')
 
-.global mm_detect
-.global mm_map
+.global mm_detect_e820
 
-SEC_BSS(`.bootsys_bss')
-mm_map:
-.space E820_ENTRY_LEN * E820_MAX_ENTRIES
+SEC_RW_DATA(`.bootsys_data')
 
 SEC_TEXT(`.bootsys_text')
+
 /*
- * ax - error code
- * bx - pointer to the memory map
- * si - length of memory map
- * TODO: maybe return the length of the memory map in cx to preserve the
- * purpose of the counter register cx!
+ * Input:
+ * `es:di' - buffer for memory map
+ *
+ * Output:
+ * `si' - number of entries in memory map
+ *
+ * TODO:
+ * At least one known BIOS expects the buffer to be always the same, so we
+ * load each entry into the buffer and copy it to the map.
  */
-mm_detect:
-	mov %ds, %ax
-	mov %ax, %es
-	mov $mm_map, %di
+mm_detect_e820:
+	push %eax
+	push %ecx
+	push %edx
+	push %ebx
+	push %si
+	push %di
+
 	xor %ebx, %ebx
 	mov $E820_SMAP, %edx
-	xor %si, %si /* cx already in use, so this is our counter register */
+	xor %si, %si
 1:
-	cmp $E820_MAX_ENTRIES, %si /* if no. entries maxes out */
+	/* We can only have so many entries. */
+	cmp $E820_MAX_ENTRIES, %si
 	je 3f
 
 	mov $0xe820, %eax
 	mov $E820_ENTRY_LEN, %ecx
-	int $0x15 /* obtain entry */
+	int $0x15
 
-	jc 4f /* some BIOSes terminate with cf = 0 */
+	/*
+	 * Some BIOSes terminating with a set carry flag fail to set "SMAP"
+	 * properly, so we check for the flag first.
+	 */
+	jc 3f
+
+	 /*
+	  * Some BIOSes stop setting "SMAP" during the loop for unknown reason.
+	  * We just fail in that case.
+	  */
 	cmp $E820_SMAP, %eax
-	jne 2f /* if SMAP value not set properly */
+	jne 2f
 
-	test %ebx, %ebx
-	jz 4f /* ebx = 0x0 -> terminate entry list */
+	test %ebx, %ebx /* if BIOS returns with %ebx = 0x0 */
+	jz 3f
 
-	add $E820_ENTRY_LEN, %di
+	add $E820_ENTRY_LEN, %di /* point to next entry */
+
 	inc %si
 	jmp 1b
-2:
-	mov $E820_BAD_SMAP, %ax
-	ret
-3:
-	mov $E820_TOO_MANY, %ax
-	ret
-4:
-	xor %ax, %ax
-5:
-	mov $mm_map, %bx
-	ret
 
-/* TODO: warn if e820_entry_len * e820_max_entries > register size */
+2:
+	xor %si, %si
+3:
+	pop %di
+	pop %si
+	pop %ebx
+	pop %edx
+	pop %ecx
+	pop %eax
+	ret

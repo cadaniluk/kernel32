@@ -1,4 +1,5 @@
 include(`sec_boot_params.h')
+include(`kernel_params.h')
 include(`i8259A.h')
 include(`mm_detect.h')
 include(`descr.h')
@@ -30,8 +31,10 @@ tmp_gdtr:
  * but improving that would indeed be nice. */
 crlf: .asciz "\r\n"
 mm_detect_msg: .asciz "Running memory detection\r\n"
+mm_detect_ok_msg: .asciz "Memory detection succeeded\r\n"
+mm_detect_fail_msg: .asciz "Memory detection failed\r\n"
 load_kern_msg: .asciz "Loading the kernel (retrying three times)\r\n"
-load_kern_ok_msg: .asciz "Loading the kernel succeded\r\n"
+load_kern_ok_msg: .asciz "Loading the kernel succeeded\r\n"
 load_kern_fail_msg: .asciz "Loading the kernel failed\r\n"
 remap_irqs_msg: .asciz "Remapping IRQs\r\n"
 set_pe_msg: .asciz "Setting PE flag\r\n"
@@ -53,7 +56,15 @@ bootsys_start:
 	mov $DEF_ATTR, %al
 	call vga_puts
 
-	call mm_detect
+	/* %es contains `0x0'. */
+	mov $KP_E820_MAP, %di
+	call mm_detect_e820
+	test %si, %si
+	jz mm_detect_fail
+
+	mov $mm_detect_ok_msg, %si
+	mov $OK_ATTR, %al
+	call vga_puts
 
 	/* Load the kernel now. */
 
@@ -62,15 +73,15 @@ bootsys_start:
 	call vga_puts
 
 	xor %bp, %bp
-1:
-	mov $KERNEL_ORG >> 0x4, %ax
-	mov %ax, %es
-	mov $KERNEL_ORG & 0xf, %bx
-	mov $0x200 | KERNEL_SECTORS, %ax
 	mov $(LBA_TO_C(HEADS, SECTORS, KERNEL_LBA) << 0x8) | dnl
 	LBA_TO_S(HEADS, SECTORS, KERNEL_LBA), %cx
 	mov $(LBA_TO_H(HEADS, SECTORS, KERNEL_LBA) << 0x8), %dh
-	mov SBP_DRV_NUM, %dl
+	mov %es:SBP_DRV_NUM, %dl
+	mov $KERNEL_ORG >> 0x4, %ax
+	mov %ax, %es
+1:
+	mov $KERNEL_ORG & 0xf, %bx
+	mov $0x200 | KERNEL_SECTORS, %ax
 	int $0x13
 	jnc 1f
 	dec %ah /* error message with ID 1 is at index `0x0' */
@@ -152,5 +163,10 @@ bootsys_start:
 
 kern_load_fail:
 	mov $load_kern_fail_msg, %si
+	mov $ERR_ATTR, %al
+	call vga_puts
+
+mm_detect_fail:
+	mov $mm_detect_fail_msg, %si
 	mov $ERR_ATTR, %al
 	call vga_puts
