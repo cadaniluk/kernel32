@@ -4,4 +4,4 @@ dnl
 define(`KERNEL_ORG', `0x1000')dnl
 define(`KERNEL_MAX_LEN', `(KERNEL_SECTORS * 512)')dnl
 dnl
-) /* `KERNEL_M4' */
+) /* KERNEL_M4 */
