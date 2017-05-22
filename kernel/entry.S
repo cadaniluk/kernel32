@@ -1,4 +1,5 @@
-include(`descr.h')
+#include <descr.h>
+#include <boot.h>
 
 .global kernel_start
 
@@ -15,19 +16,21 @@ idtr:
 .int idt
 
 
-.text
+.section .text.kernel_start
 kernel_start:
-/*
- * Technically, we don't need to reload the GDTR register. However, booting
- * system and kernel are strictly kept apart and so are their addresses and
- * symbols. It's just easier to reload the GDTR register at a negligible
- * performance cost.
- */
-	mov $0x10, %ax
+	/* We must use the descriptor from the temporary GDT to reload the GDTR. */
+	mov $TMP_D0_SEL, %ax
 	mov %ax, %ds
+
+	/*
+	 * The temporary GDT might be overwritten and is too small. To keep the
+	 * interface between boot system and kernel clean, we just load a new
+	 * GDT.
+	 */
 
 	lgdt gdtr
 	ljmp $C0_SEL, $1f
+
 1:
 	mov $D0_SEL, %ax
 	mov %ax, %ds

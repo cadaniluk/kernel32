@@ -1,42 +1,43 @@
-(I'm trying hard to put my ASCII graphics skills to good use here to
-depict the steps illustratively for a better understanding, so don't judge me.
-It's all for a good purpose.)
-
 1.
 The primary bootloader is loaded to physical address `0x7c00' by the BIOS.
 
 0x0  0x400 0x500 0x7c00       0x7e00
- .-----.-----.-----v------------.
+ .-----.-----.-----.------------.
  | IVT | BDA | ... | Primary    |
  |     |     |     | Bootloader |
- .-----.-----.-----^------------.
+ .-----.-----.-----.------------.
 
 2.
-The primary bootloader loads the secondary one right below the EBDA, as high
-in the first MiB as possible. The EBDA's address must be retrieved at runtime
-from the BDA, which is located at 0x400 and comprises 256 bytes.
+The primary bootloader fills the secondary bootloader parameters (SBP). It is
+located right after the IVT, overwriting the BDA. Interrupts are disabled
+throughout booting, so the BDA is guaranteed to remain unchanged. The secondary
+bootloader is loaded right after the SBP then.
 
-0x0  0x400 0x500 0x7c00       0x7e00
- .-----.-----.-----.------------.-----v------------.------.
- | IVT | BDA | ... | Primary    | ... | Secondary  | EBDA |
- |     |     |     | Bootloader | ... | Bootloader |      |
- .-----.-----.-----.------------.-----^------------.------.
+0x0  0x400
+ .-----.-----.--------.-----.------------------.
+ | IVT | SBP | Boot   | ... | Primary    | ... |
+ |     |     | System | ... | Bootloader | ... |
+ .-----.-----.--------.-----.------------------.
 
 3.
-The secondary bootloader loads the kernel right after the BDA, as low as
-possible in the first MiB, so the kernel has a maximum of contiguous space
-available, ranging at most to the start of the secondary bootloader.
+The secondary bootloader fills the kernel parameters, which are loaded
+right beneath the kernel. Then the kernel is loaded to `0x10000'.
+The main advantage of this is that we don't need to figure out the EBDA address
+and do all the bit twiddling related to loading the boot system in the first
+MiB as high as possible as it used to be. That may be just a minor advantage,
+but it is one.
 
-0x0  0x400 0x500    0x7c00       0x7e00
- .-----.-----v--------.------------.-----.------------.------.
- | IVT | BDA | Kernel | Primary    | ... | Secondary  | EBDA |
- |     |     |        | Bootloader | ... | Bootloader |      |
- .-----.-----^--------.------------.-----.------------.------.
+0x0  0x400                    0x10000
+ .-----.-----.--------.-----.----.--------.-----.
+ | IVT | SBP | Boot   | ... | KP | Kernel | ... |
+ |     |     | System | ... |    |        | ... |
+ .-----.-----.--------.-----.----.--------.-----.
 
 And that's what memory looks like after the basic booting procedure has been
 completed. I'm pretty confident that the kernel will not get any bigger than
-the 600-ish KiBs it is currently allotted. The space above the first MiB is
+the 550-ish KiBs it is currently allotted. The space above the first MiB is
 for dynamically allocated data and code like user processes or dynamic kernel
 data structures.
-TODO: change ascii graph to load kernel to 0x0 once the custom disk driver
-has been written and we can load the kernel to 0x0 without complications.
+
+TODO: change ascii graph and the text to overwrite the IVT once we have the
+drivers for the boot system and BIOS interrupts are not needed anymore.

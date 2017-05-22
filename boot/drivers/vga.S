@@ -1,76 +1,85 @@
 /* Simple VGA driver for basic adapter interaction. */
 
-include(`vga.h')
+#include <vga.h>
 
-.global vga_init
-.global vga_puts
+.code16
 
-SEC_RW_DATA(`.bootsys_data')
-.balign 2
+.global vga_init, vga_print
 
-curr_pos: .word 0x0
+.data
+/* TODO: allocate on heap or similar! */
+curr_pos: .skip 0x2
 
-SEC_TEXT(`.bootsys_text')
+.text
 /*
- * `ah' - line where to start
+ * Parameters:
+ * `al' - starting line
  */
 vga_init:
-	push %ax
-
-	mov $NUM_COLS * 2, %al
+	mov $NUM_COLS * 2, %ah
 	mul %ah
+
 	mov %ax, curr_pos
 
-	pop %ax
 	ret
 
 /*
- * `ds:si' - string to print
- * `al' - character attribute
+ * Parameters:
+ * `si' - address of string
+ * `bl' - attribute
  */
-vga_puts:
-	push %ax
-	push %bx
-	push %dx
-	push %si
-	push %di
+vga_print:
 	push %es
 
-	mov %al, %bl
 	mov $VID_SEG, %ax
 	mov %ax, %es
 	mov curr_pos, %di
-1:
-	lodsb
+	jmp 2f
 
+1:
+	/* The UNIX way: a newline character does a full CRLF. */
+	mov curr_pos, %dx
+
+	/* Newline Feed */
+	add $NUM_COLS * 2, %di
+
+	/* Carriage Return */
+	mov %di, %ax
+	mov $NUM_COLS * 2, %dl
+	div %dl
+	movzx %ah, %ax
+	sub %ax, %di
+
+2:
+	lodsb
 	test %al, %al
-	jz 4f
-	cmp $0xa, %al
-	je 2f
-	cmp $0xd, %al
-	je 3f
+	jz 3f
+
+	cmp $'\n, %al
+	je 1b
 
 	mov %bl, %ah
 	stosw
-	jmp 1b
-2:
-	add $NUM_COLS * 2, %di
-	jmp 1b
+	jmp 2b
+
 3:
-	mov $NUM_COLS * 2, %cx
-	xor %dx, %dx
-	mov %di, %ax
-	div %cx
-	sub %dx, %di
-	
-	jmp 1b
-4:
 	mov %di, curr_pos
+	shr %di
+	mov %di, %bx
+
+	mov $VGA_CRTC_ADDR(VGA_IOS_VALUE), %dx
+	mov $VGA_CLOC_LO, %al
+	out %al, %dx
+	mov $VGA_CRTC_DATA(VGA_IOS_VALUE), %dx
+	mov %bl, %al
+	out %al, %dx
+
+	mov $VGA_CRTC_ADDR(VGA_IOS_VALUE), %dx
+	mov $VGA_CLOC_HI, %al
+	out %al, %dx
+	mov $VGA_CRTC_DATA(VGA_IOS_VALUE), %dx
+	mov %bh, %al
+	out %al, %dx
 
 	pop %es
-	pop %di
-	pop %si
-	pop %dx
-	pop %bx
-	pop %ax
 	ret

@@ -1,0 +1,2 @@
+cpp Makefile -w -P -I m4/ -I include/ -traditional-cpp | \
+m4 -I m4/ -I include/ - | make $@ -f -

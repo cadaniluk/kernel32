@@ -1,15 +1,28 @@
-# Parameters passed to GNU make.
-# `dbg=y|n': decides whether debugging mode is on or not.
-# `sep_boot=y|n': decides whether bootloader and kernel should be seperate
-# images or not.
-# TODO: add functionality for these parameters
+/*
+ * This makefile is preprocessed and cannot be executed directly by make!
+ * There is a script at the root of the source tree that does the preprocessing
+ * and then executes the makefile, use it!WD
+ */
+
+#include <boot.h>
+#include <addrs.h>
+
+/*
+ * Parameters passed to GNU make.
+ * `dbg=y|n': decides whether debugging mode is on or not.
+ * `sep_boot=y|n': decides whether bootloader and kernel should be seperate
+ * images or not.
+ * TODO: add functionality for these parameters
+ */
 
 SHELL = /bin/bash
 
-# TODO: not needed by bochs (i just use objdump to obtain addresses), but
-# maybe a symbol file will be useful later. just keep it commented out.
-#%.sym: %.out
-#	objcopy --only-keep-debug $< $@
+/*
+ * TODO: not needed by bochs (i just use objdump to obtain addresses), but
+ * maybe a symbol file will be useful later. just keep it commented out.
+ *%.sym: %.out
+ *	objcopy --only-keep-debug $< $@
+ */
 
 %.img: %.out
 	cp $< tmp.out
@@ -20,18 +33,21 @@ SHELL = /bin/bash
 %.out:
 	make -C $* all
 
-# TODO: merge run and debug targets and decide to debug or not using the dbg
-# parameter.
+/*
+ * TODO: merge run and debug targets and decide to debug or not using the dbg
+ * parameter.
+ */
 
 all: image.img
 
 image.img: boot.img kernel.img
 	rm -f image.img
 	bximage -mode=create -fd=1.44M -q image.img
-# TODO: replace count with BOOTSYS_SECTORS+1 (for prim. bootloader)!!!!!!
-	dd if=boot.img of=image.img bs=512 count=4 conv=notrunc
-# TODO: replace count with KERNEL_SECTORS!!!!!
-	dd if=kernel.img of=image.img bs=512 count=8 seek=4 conv=notrunc
+	dd if=boot.img of=image.img bs=$(shell printf "%d" $$((SECTOR_SIZE))) \
+	count=$(shell printf "%d" $$((BOOTSYS_SECTORS + 1))) conv=notrunc
+	dd if=kernel.img of=image.img bs=$(shell printf "%d" $$((SECTOR_SIZE))) \
+	count=$(shell printf "%d" $$((KERNEL_SECTORS))) \
+	seek=$(shell printf "%d" $$((BOOTSYS_SECTORS + 1))) conv=notrunc
 
 boot.img: boot.out
 

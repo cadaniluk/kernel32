@@ -1,3 +1,8 @@
+#include <mm_detect.h>
+#include <kernel_params.h>
+
+.code16
+
 /*
  * This is one of the few (if not the only) header file, where I got major ideas
  * from the Linux source code. The code is entirely self-written, like EVERY 
@@ -6,73 +11,65 @@
  * that; Linux has.
  */
 
-include(`mm_detect.h')
-
 .global mm_detect_e820
 
-SEC_RW_DATA(`.bootsys_data')
+.data
+/* TODO: allocate on heap or similar! */
+entry: .skip 0x14
+entry_dest: .int KP_E820_MAP
 
-SEC_TEXT(`.bootsys_text')
-
+.text
 /*
- * Input:
- * `es:di' - buffer for memory map
- *
- * Output:
- * `si' - number of entries in memory map
- *
- * TODO:
- * At least one known BIOS expects the buffer to be always the same, so we
- * load each entry into the buffer and copy it to the map.
+ * Returns the number of entries in `%ax'.
  */
 mm_detect_e820:
-	push %eax
-	push %ecx
-	push %edx
-	push %ebx
-	push %si
-	push %di
-
 	xor %ebx, %ebx
 	mov $E820_SMAP, %edx
-	xor %si, %si
-1:
-	/* We can only have so many entries. */
-	cmp $E820_MAX_ENTRIES, %si
-	je 3f
 
+	/*
+	 * `%ebp' instead of `%bp' is used here to enable using 32-bit addressing.
+	 * Since the boot system is always within the first 64 KiB of memory,
+	 * `%ebp == %bp' is guaranteed.
+	 */
+	mov $E820_MAX_ENTRIES, %ebp
+
+1:
 	mov $0xe820, %eax
-	mov $E820_ENTRY_LEN, %ecx
+	mov $E820_ENTRY_SIZE, %ecx
+	mov $entry, %di
 	int $0x15
 
 	/*
-	 * Some BIOSes terminating with a set carry flag fail to set "SMAP"
+	 * Some BIOSes terminating with a set carry flag but fail to set "SMAP"
 	 * properly, so we check for the flag first.
 	 */
-	jc 3f
+	jc success
 
-	 /*
-	  * Some BIOSes stop setting "SMAP" during the loop for unknown reason.
-	  * We just fail in that case.
-	  */
+	/*
+	 * Some BIOSes stop setting "SMAP" during the loop for unknown reasons.
+	 * We just fail in that case.
+	 */
 	cmp $E820_SMAP, %eax
-	jne 2f
+	jne failure
 
-	test %ebx, %ebx /* if BIOS returns with %ebx = 0x0 */
-	jz 3f
+	/* Terminate normally: `%ebx' is zero. */
+	test %ebx, %ebx
+	jz success
 
-	add $E820_ENTRY_LEN, %di /* point to next entry */
+	movzx %di, %esi
+	mov entry_dest, %edi
+	mov $0x5, %ecx	/* assumes entry size to be 20 bytes */
+	rep movsl
+	mov %edi, entry_dest
 
-	inc %si
-	jmp 1b
+	dec %ebp
+	jz 1b
 
-2:
-	xor %si, %si
-3:
-	pop %di
-	pop %si
-	pop %ebx
-	pop %edx
-	pop %ecx
-	pop %eax
+success:
+	mov $E820_MAX_ENTRIES, %ax
+	sub %bp, %ax
+	ret
+
+failure:
+	xor %ax, %ax
 	ret

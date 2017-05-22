@@ -1,7 +1,9 @@
-include(`sec_boot_params.h')
-include(`cmos.h')
-include(`vga.h')
-include(`kernel.m4')
+#include <addrs.h>
+#include <sec_boot_params.h>
+#include <cmos.h>
+#include <vga.h>
+
+.code16
 
 /*
  * TODO: add macro constant SECTOR_SIZE = 512 and replace all its former
@@ -15,12 +17,10 @@ include(`kernel.m4')
  * `ss' is not simply set to `0x0' here to indicate an underflow of the stack
  * with the overflow flag (if `sp' underflows).
  */
-define(`BOOT_SS', `0x50') /* right after BDA */
-define(`BOOT_SP', `(BOOT_ORG - BOOT_SS * 0x10)')
+#define BOOT_SS 0x50 /* right after BDA */
+#define BOOT_SP (BOOT_ORG - BOOT_SS * 0x10)
 
-define(`BDA_EBDA_BASE', `0x40e') /* EBDA address = base_address:0x0 */
-
-define(`VGA_IOS_VALUE', `1') /* determines CRTC register I/O address */
+#define BDA_EBDA_BASE 0x40e /* EBDA address = base_address:0x0 */
 
 .global boot_start
 
@@ -34,15 +34,16 @@ cursor_loc:
 verify_cpu_msg: .asciz "Verifying CPU"
 cpu32_msg: .asciz "32-bit compatible"
 not_cpu32_msg: .asciz "32-bit incompatible"
-press_key_msg: .asciz "Press a key to reboot"
-kernel_too_large_msg: .asciz "Kernel too large"
-sec_boot_jmp_msg: .asciz "Jumping to secondary bootloader"
-disk_err_msg: .ascii "Disk operation failed (code 0x"
-disk_code: .ascii "cc"
-.asciz ")"
 
-sec_boot_addr:
-.word 0x0, 0x0 /* initialized later on */
+check_space_msg: .asciz "Checking if space suffices"
+too_little_space_msg: .asciz "Space too small"
+space_sufficient_msg: .asciz "Space suffices"
+
+disk_err_msg: .ascii "Disk OP fail (code 0x"
+disk_code: .asciz "cc)"
+
+sec_boot_jmp_msg: .asciz "Jumping to secondary bootloader"
+press_key_msg: .asciz "Press a key to reboot"
 
 .text
 boot_start:
@@ -61,11 +62,11 @@ boot_start:
 	 */
 	mov $VGA_MISC_OUT_RD, %dx
 	in %dx, %al
-ifelse(VGA_IOS_VALUE, `0', `dnl
+#if VGA_IOS_VALUE == 0
 	and $~0x1 << BIT_POS(VGA_IOS), %al
-', `dnl
+#else
 	or $0x1 << BIT_POS(VGA_IOS), %al
-')dnl
+#endif
 	mov $VGA_MISC_OUT_WR, %dx
 	out %al, %dx
 
@@ -126,35 +127,42 @@ ifelse(VGA_IOS_VALUE, `0', `dnl
 
 	/* Get EBDA start address and check if kernel size is OK. */
 
-	mov BDA_EBDA_BASE, %ax /* get start seg addr of EBDA */
-	sub $0x1000 + BOOTSYS_SECTORS << 0x5, %ax
-	/*
-	 * `0x1000': point to 64 KiB before EBDA
-	 * `BOOTSYS_SECTORS << 0x5': make sure that loading the
-	 * sectors does not cross 64 KiB boundaries because that makes
-	 * the BIOS routine err
-	 */
+	mov $check_space_msg, %si
+	mov $DEF_ATTR, %bl
+	call puts
 
-	mov %ax, sec_boot_addr + 0x2 /* for far jmp to secondary bootloader */
-	mov %ax, %dx
-	sub $KERNEL_ORG >> 0x4, %dx /* get paragraphs available for kernel */
-	cmp $KERNEL_SECTORS << 0x5, %dx /* shift does sectors -> paragraphs */
-	jb kernel_too_large
-	/* `ax' still contains the start segment address. */
+	/* TODO: BDA 0x40e or int $0x12? is any of them unreliable in some
+	 * situations/on some systems? */
+	/*
+	 * Get the address of the BDA shifted to the right by 0x4 bits. It seems
+	 * that the EBDA is always aligned to paragraph (16-byte, damn Real Mode)
+	 * boundaries.
+	 */
+	movzwl BDA_EBDA_BASE, %eax
+	shl $0x4, %eax
+
+	cmp $KERNEL_ORG + KERNEL_LEN, %eax	/* does everything fit? */
+	jbe too_little_space
+
+	mov $space_sufficient_msg, %si
+	mov $OK_ATTR, %bl
+	call puts
 
 	/*
 	 * Now, load the Real Mode part of the kernel, effectively, a
 	 * second-stage bootloader. Retry three times because the read
-	 * command does not have a timeout.
+	 * command does not have a timeout and the external device could be slower
+	 * than the CPU.
 	 */
+	/* TODO: ensure that the load doesnt cross a 64kib boundary */
 	xor %bp, %bp
-	mov sec_boot_addr + 0x2, %ax /* EBDA seg addr (off is `0x0') */
-	mov %ax, %es
-	xor %bx, %bx
+	mov %bp, %es
+	mov $BOOTSYS_ORG, %bx
 	mov $(LBA_TO_C(HEADS, SECTORS, BOOTSYS_LBA) << 0x8) | dnl
 	LBA_TO_S(HEADS, SECTORS, BOOTSYS_LBA), %cx
 	mov $(LBA_TO_H(HEADS, SECTORS, BOOTSYS_LBA) << 0x8), %dh
 	mov SBP_DRV_NUM, %dl
+
 1:
 	mov $0x200 | BOOTSYS_SECTORS, %ax
 	int $0x13
@@ -165,13 +173,13 @@ ifelse(VGA_IOS_VALUE, `0', `dnl
 	xor %ah, %ah
 	int $0x13
 	jmp 1b
+
 1:
+	mov $sec_boot_jmp_msg, %si
+	mov $DEF_ATTR, %bl
+	call puts
 
-mov $sec_boot_jmp_msg, %si
-mov $DEF_ATTR, %bl
-call puts
-
-ljmp *sec_boot_addr
+	ljmp $0x0, $BOOTSYS_ORG
 
 /* TODO: change that to something more sophisticated later! */
 no_32b:
@@ -196,8 +204,8 @@ disk_err:
 
 	jmp reboot
 
-kernel_too_large:
-	mov $kernel_too_large_msg, %si
+too_little_space:
+	mov $too_little_space_msg, %si
 	mov $ERR_ATTR, %bl
 	call puts
 
@@ -222,12 +230,14 @@ puts:
 	mov $VID_SEG, %ax
 	mov %ax, %es
 	mov %bl, %ah
+
 1:
 	lodsb
 	test %al, %al
 	jz 2f
 	stosw
 	jmp 1b
+
 2:
 	/* Write back the location to main memory. */
 	shr %di
@@ -259,7 +269,7 @@ puts:
 	ret
 
 /*
- * `ah' - number to print (disk routines return the error code in `ah')
+ * `ah' - number to print (disk routines return the error code in `ah
  * `ds:si' - 16-bit memory location to write the result to
  * Converts an eight-bit hexadecimal number to ASCII and writes it to a 16-bit
  * memory location.
@@ -276,14 +286,17 @@ putx8:
 	shr $0x4, %ax
 	shr $0x4, %al
 	mov $0x2, %cx
+
 1:
 	xchg %al, %ah
 	cmp $0x9, %al
 	jae 2f
 	add $0x30, %al	/* to digit */
 	jmp 3f
+
 2:
 	add $0x57, %al	/* to letter */
+
 3:
 	dec %cx
 	jnz 1b

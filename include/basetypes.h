@@ -1,4 +1,7 @@
-ifdef(`TYPES_H',, `
+#ifdef __C__
+
+#ifndef TYPES_H
+#define TYPES_H
 
 typedef signed char int8_t;
 typedef unsigned char uint8_t;
@@ -17,4 +20,6 @@ typedef unsigned long long uint64_t;
  * the implementation later. */
 typedef unsigned int size_t;
 
-') /* TYPES_H */
+#endif
+
+#endif

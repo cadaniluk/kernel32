@@ -1,11 +1,12 @@
+#include <addrs.h>
+
 ENTRY(kernel_start)
 
 MEMORY {
-	kernel : org = KERNEL_ORG, len = KERNEL_MAX_LEN
+	kernel : org = KERNEL_ORG, len = KERNEL_LEN
 }
 
 SECTIONS {
-    .text : { *(.text) } > kernel
+    .text : { *(.text.kernel_start) *(.text) } > kernel
     .data : { *(.data) } > kernel
-    .bss : { *(.bss) } > kernel
 }

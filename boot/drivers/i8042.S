@@ -1,5 +1,10 @@
-include(`i8042.h')
+#include <i8042.h>
 
+.code16
+
+/* TODO: fix this code! redefine the missing macros to get this working
+ * or just rewrite them as proper functions with ret and all.*/
+#if 0 == 1
 /* TODO: no `i8042_destroy' function so far... add if necessary! */
 .global i8042_init/*, i8042_destroy */
 .global i8042_disable, i8042_enable
@@ -119,3 +124,4 @@ i8042_sysreset:
 	cli
 	hlt
 	/* No `ret' needed. */
+#endif

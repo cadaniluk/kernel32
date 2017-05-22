@@ -1,0 +1,19 @@
+The term "boot system" is a synonym for "secondary bootloader." It is
+executed right after the primary bootloader and sets up the system and
+gathers information to let the kernel run smoothly afterwards.
+
+ATM, it is written entirely in assembly. I was close to rewriting it in C,
+but I talked to someone on the Internet and he convinced me not to do that.
+I'd have to use `.code16gcc', enabled through the `-m16' switch and that is
+just a nasty hack, after all.
+
+Throughout the whole boot system, the segment registers are zeroed out, except
+when writing to video memory. Since I set the memory map up in such a way that
+the boot system can reach everything it needs without changing the segment
+registers (except for video memory), this works and is relatively clean. We
+have a basically flat memory model - with only 64 KiB, though.
+It follows that all routines in the boot system must preserve the segment
+registers' values. GPRs need not be preserved, though. It is all right if
+they are left in an unknown state after a routine has been called. It is
+not a big drawback for the code and it frees us from having to do the pushing
+and popping necessary to preserve register values. It can be quite a chaos.

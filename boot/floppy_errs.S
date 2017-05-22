@@ -1,3 +1,5 @@
+.code16
+
 .global disk_status_table
 
 SEC_R_DATA(`.bootsys_data')

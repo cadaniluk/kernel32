@@ -1,13 +1,25 @@
-ifdef(`KERNEL_PARAMS_H',, `
-define(`KERNEL_PARAMS_H')
+#ifndef KERNEL_PARAMS_H
+#define KERNEL_PARAMS_H
 
-include(`kernel.m4')
+#define KP_BASE 0x500
+#define KP_SIZE (KERNEL_ORG - KP_BASE)
 
-/* TODO: change to 0x0 as soon as we have all drivers ready and are BIOS-
- * independent. */
-define(`KP_BASE', `0x500')
-define(`KP_E820_MAP', `KP_BASE')
+#ifdef __ASSEMBLER__
 
-define(`KP_SIZE', `(KERNEL_ORG - KP_BASE)')
+#include <addrs.h>
+#include <mm_detect.h>
 
-')
+#define KP_E820_MAP KP_BASE
+
+#elif defined(__C__)
+
+static struct {
+	struct e820_entry e820_map[E820_MAX_ENTRIES];
+} * const kernel_params = (void *) KP_BASE;
+
+_Static_assert(sizeof(*kernel_params) <= KP_SIZE,
+"Kernel parameters too large");
+
+#endif
+
+#endif
