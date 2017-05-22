@@ -1,57 +1,66 @@
 Overall Description
+-------------------
 
-This is the `README' file of my custom kernel and bootloader, all merged
+This is the `README' file of my small kernel and bootloader, all merged
 into one project. It aims to be a POSIX-compliant (this may take decades to
 accomplish, though) kernel, which can run at least GNU user space programs.
 Moreover, that should be guaranteed through POSIX compliance.
 Naturally, this project utilizes the GNU toolchain, including GCC, as, make,
-ld, (perhaps) m4, objdump, objcopy, and more I cannot think of right now.
+ld, m4, objdump, objcopy, and some more.
+The kernel sets out to be a microkernel. Microkernels seem more interesting
+than monolithic kernels, which would be my other option.
 
 Rules
+-----
 
-There are seperate rules for the booting part and the kernel.
-
-Rules: Kernel
-
-1. The GNU as directive `.set' and similar directives are avoided. Use m4
-   instead. Do not use the C preprocessor unless you absolutely must.
-2. Setters are called `set_xxx'. Getters are called `xxx'.
-3. Header files are divided into sections for the assembler and for the
-  compiler. Code only for the assembler is surrounded by a `#if __ASSEMBLER__
-  == 1 ... #endif' macro pair, code only for the compiler is embraced by a `#if
-  __ASSEMBLER__ != 1 ... #endif' macro pair, and code for both is free of
-  conditional macros of that kind. `__ASSEMBLER__' is a standard predefined
-  macro
-4. All code is C11-compliant. Mainly to support variable definitions within
-  for-loops and use the wonderful `static_assert' feature.
-5. Use macros instead of `enum's to retain compatibility to assembly code.
-   This particular rule might be argued about in special situations, though.
-6. The number of columns of a source file is limited to 80.
-7. One indentation level amounts to one tab (with preferably eight spaces).
-8. Use K&R coding style.
-
-(I might not have followed all of those myself, since the rules above have been
-created in the process of writing code. In the future, I definitely will,
-though, and I'll rectify any rule violations in my code as soon as I've
-completed the more important stuff.)
+1.
+Use K&R style for C code.
+2.
+The C preprocessor is the preprocessor of choice. Use it for everything
+but complex macros, in which case you may use m4. m4 may only be used for
+defining and invoking macros, though, never for anything else.
+3.
+The definition of `__ASSEMBLER__' and `__C__' indicates whether the code
+segment should be read only by the assembler or C compiler, respectively.
+`#ifdef' is convenient here. 
+4.
+All C code is C11-compliant. Mainly to support variable definitions within
+for-loops and to enable use of the `static_assert' feature.
+5.
+The number of columns of a source file is limited to 80.
+6.
+One indentation level amounts to one tab (with preferably eight spaces).
+7.
+A multi-line comment should look like this:
+	/* 
+	 * TEXT STARTS HERE
+	 * ...
+	 * TEXT ENDS HERE
+	 */
 
 Parts
+-----
 
 The whole project is split into two parts: the part responsible for booting
 and the actual kernel. These two parts are to be kept split; do not create
 dependencies between those, only clean interfaces.
 
-The booting part includes the first-stage bootloader and the booting system,
+The booting part includes the first-stage bootloader and the boot system,
 which basically prepares the load of the kernel into memory and its final
 execution: they determine data (memory size, hardware available, etc.), load the
 corresponding next stage (and eventually the kernel), move I/O-mapped memory,
 program controllers, and whatever. It is written in assembler because GCC
 currently does not support real 16-bit code; it just emits 32-bit and adds size
-override prefixes, which can get really lengthy.
+override prefixes, which can get really lengthy. Also, not all x86 instructions
+can be expressed directly in C, especially those for system programming.
+Primary bootloader is a synonym for first-stage bootloader.
+Secondary or second-stage bootloader is a synonym for boot system
 
 The kernel is, well, the kernel. It is the central part of the operating system.
 
+
 Directories
+-----------
 
 These are the directories and the fields they are supposed to cover.
 
@@ -60,43 +69,17 @@ The root directory. It contains all other directories and configuration
 files, linker scripts, makefiles, etc., which concern the
 the project as a whole.
 
-`/boot':
+`boot/':
 Contains the bootloader and the secondary bootloader. Basically, the whole
-booting system.
+boot system.
 
-`/kernel':
+`kernel/':
 Contains all files related to the kernel.
 
-`/kernel/include':
-Header files for interaction with drivers and other interfaces
-necessary for writing kernel code like synchronization primitives, debugging
-utility, and numerous other things. 
-Many (if not all) header files described in here have a corresponding
-implementation, so, for example, the driver interfaces in `/include/drivers'
-have their implementations in `/drivers'. Remember that when looking for
-certain files. 
-
-`/kernel/include/drivers':
-Header files for drivers. 
-
-`/kernel/include/drivers/pci':
-Drivers for devices intended for attachment to the PCI (Peripheral Component
-Interconnect) bus. The bus is the current standard for normal PCs with some
-optional extensions like PCI Express.     
-
-`/kernel/include/drivers/isa':
-Drivers for devices intended for attachment to the (legacy) ISA (Industry
-Standard Architecture) bus. The devices originate back from the IBM PC, PC XT, 
-and PC AT days.
-
-`/kernel/drivers':
-Implementations of drivers for all the devices and the like the
-kernel needs to interact with. "and the like" implies that, strictly speaking,
-not only devices are kept in there: an APM driver, an ACPI driver, etc. are also
-supposed to be rooted in that directory.
+`include/':
+The header files. There isn't a clean split between boot system and kernel
+headers. I'm not sure if there ever will be one.
 
 `/tools':
-Name shamelessly copied from the Linux kernel (I don't think the GPL (current
-Linux license) disallows it, so, no copyright, no guilty conscience). It
-contains scripts/programs that help managing, building, and developing the
-project.
+It contains scripts/programs that help managing, building, and developing
+the project.
