@@ -17,8 +17,8 @@ CPPFLAGS += -P -w -I $(ROOT)/include/ -I $(M4DIR)
 %.ld.pp: %.ld
 	$(CPP) $(CPPFLAGS) -x c $< | $(M4) $(M4FILES) - > $@
 
-boot_objs = main.o boot.o floppy_errs.o mm_detect.o drivers/i8042.o \
-drivers/vga.o # cmos.o apm.o
+boot_objs = main.o boot.o floppy_errs.o mm_detect.o drivers/vga.o
+# cmos.o apm.o drivers/i8042.o
 
 # TODO: merge run and debug targets and decide to debug or not using the dbg
 # parameter.
