@@ -1,6 +1,6 @@
 /* Simple VGA driver for basic adapter interaction. */
 
-#include <vga.h>
+#include <drivers/vga.h>
 
 .code16
 

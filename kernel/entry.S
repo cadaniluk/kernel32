@@ -1,4 +1,4 @@
-#include <descr.h>
+#include <mm/seg.h>
 #include <boot.h>
 
 .global kernel_start

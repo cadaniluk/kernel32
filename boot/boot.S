@@ -1,7 +1,7 @@
 #include <addrs.h>
 #include <sec_boot_params.h>
-#include <cmos.h>
-#include <vga.h>
+#include <drivers/cmos.h>
+#include <drivers/vga.h>
 
 .code16
 

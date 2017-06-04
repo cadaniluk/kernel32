@@ -1,5 +1,5 @@
-#include <descr.h>
-#include <i8259A.h>
+#include <mm/seg.h>
+#include <drivers/i8259A.h>
 
 descr_t gdt[GDT_SIZE] = {
 	0x0, /* null descriptor */

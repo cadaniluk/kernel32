@@ -1,9 +1,9 @@
 #include <boot.h>
-#include <descr.h>
+#include <mm/seg.h>
 #include <addrs.h>
 #include <crn.h>
-#include <i8259A.h>
 #include <sec_boot_params.h>
+#include <drivers/i8259A.h>
 
 .code16
 
