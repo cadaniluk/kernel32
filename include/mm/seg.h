@@ -30,12 +30,12 @@ void init_idt(void);
 
 /*
  * Generates a code or data descriptor to be inserted into GDT or LDT.
- * `$1' - 32-bit segment base address
- * `$2' - 20-bit segment limit (meaning depends on granularity flag)
- * `$3' - Segment type
- * `$4' - DPL (Descriptor Privilege Level)
- * `$5' - D/B flag (meaning depends on segment type)
- * `$6' - Granularity flag
+ * `base' - 32-bit segment base address
+ * `limit' - 20-bit segment limit (meaning depends on granularity flag)
+ * `type' - Segment type
+ * `dpl' - DPL (Descriptor Privilege Level)
+ * `db' - D/B flag (meaning depends on segment type)
+ * `gran' - Granularity flag
  */
 #define MK_CD_DESCR(base, limit, type, dpl, db, gran) ( \
 	((descr_t) ((base) & 0xff000000) << 32) | \
@@ -54,9 +54,9 @@ void init_idt(void);
 /*
  * Segment type:
  * Creates the segment-type bit field.
- * `$1' - Data (0) or code (1)
- * `$2' - Write-enable (data)/read-enable (code)
- * `$3' - Expansion-direction (data)/conforming (code)
+ * `type' - Data (0) or code (1)
+ * `enable' - Write-enable (data)/read-enable (code)
+ * `exp_dir' - Expansion-direction (data)/conforming (code)
  */
 #define MK_SEGTYPE(type, enable, exp_dir) \
 	((enable) << 1 | (exp_dir) << 2 | (type) << 3)
@@ -87,8 +87,8 @@ void init_idt(void);
 #define GRANUL_4KiB 1
 
 /*
- * `$1' - TSS segment selector
- * `$2' - DPL
+ * `sel' - TSS segment selector
+ * `dpl' - DPL
  */
 #define MK_TASKG_DESCR(sel, dpl) ( \
 	((descr_t) 0x1 << 47) | \
@@ -99,10 +99,10 @@ void init_idt(void);
 
 
 /*
- * `$1' - Offset to ISR
- * `$2' - Segment selector
- * `$3' - 16-bit (0) or 32-bit (1) gate
- * `$4' - DPL
+ * `off' - Offset to ISR
+ * `sel' - Segment selector
+ * `size' - 16-bit (0) or 32-bit (1) gate
+ * `dpl' - DPL
  */
 #define MK_INTG_DESCR(off, sel, size, dpl) ( \
 	((descr_t) ((off) & 0xffff0000) << 48) | \
@@ -116,10 +116,10 @@ void init_idt(void);
 
 
 /*
- * `$1' - Offset to trap handler
- * `$2' - Segment selector
- * `$3' - 16-bit (0) or 32-bit (1) gate
- * `$4' - DPL
+ * `off' - Offset to trap handler
+ * `sel' - Segment selector
+ * `size' - 16-bit (0) or 32-bit (1) gate
+ * `dpl' - DPL
  */
 #define MK_TRAPG_DESCR(off, sel, size, dpl) \
 	((descr_t) ((off) & 0xffff0000) << 48) | \
@@ -137,10 +137,10 @@ void init_idt(void);
 
 /*
  * Generates a TSS descriptor.
- * `$1' - 32-bit segment base address
- * `$2' - 20-bit segment limit (meaning depends on granularity flag)
- * `$3' - DPL (Descriptor Privilege Level)
- * `$4' - Granularity flag
+ * `base' - 32-bit segment base address
+ * `limit' - 20-bit segment limit (meaning depends on granularity flag)
+ * `dpl' - DPL (Descriptor Privilege Level)
+ * `gran' - Granularity flag
  */
 #define MK_TSS_DESCR(base, limit, dpl, gran) \
 	((descr_t) ((base) & 0xff000000) << 32) | \
