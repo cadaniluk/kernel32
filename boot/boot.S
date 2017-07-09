@@ -101,8 +101,7 @@ boot_start:
 	mov $verify_cpu_msg, %si
 	mov $DEF_ATTR, %bl
 	call puts
-
-	/* TODO: check for intel 64 as well and take appropriate action! */
+	
 	/*
 	 * First, make sure we are actually running a 32-bit CPU. We do this
 	 * by verifying that the MSB of the `flags' register is always clear
