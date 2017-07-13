@@ -13,7 +13,7 @@
 
 #ifdef __C__
 
-#include <basetypes.h>
+#include <stdint.h>
 
 typedef uint64_t descr_t;
 

@@ -392,7 +392,7 @@ define(`VGA_SCN', `ifelse(`$#', `0', `0x0', `(_VGA_SCN($@))')')
 
 #ifdef __C__
 
-#include <basetypes.h>
+#include <stdint.h>
 
 void vga_init(unsigned int start);
 void vga_print(const char *str, uint8_t attr);
