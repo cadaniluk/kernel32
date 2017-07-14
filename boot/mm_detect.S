@@ -1,5 +1,5 @@
 #include <mm_detect.h>
-#include <kernel_params.h>
+#include <addrs.h>
 
 .code16
 

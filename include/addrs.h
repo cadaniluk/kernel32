@@ -30,4 +30,34 @@
 #error "Data does not fit into space below kernel"
 #endif
 
+
+#ifdef __ASSEMBLER__
+
+#define SBP_DRV_NUM SBP_BASE
+#define SBP_CURR_LINE (SBP_BASE + 0x1)
+
+#define KP_E820_MAP KP_BASE
+
+#elif defined(__C__)
+
+static struct {
+	uint8_t drv_num;
+	uint8_t curr_line;
+} * const sec_boot_params = (void *) SBP_BASE;
+/* TODO: i hope this static pointer is optimized out... i really do not want
+ * to have that for every single instance... */
+
+_Static_assert(sizeof(*sec_boot_params) <= SBP_SIZE,
+"Secondary bootloader parameters too large");
+
+
+static struct {
+	struct e820_entry e820_map[E820_MAX_ENTRIES];
+} * const kernel_params = (void *) KP_BASE;
+
+_Static_assert(sizeof(*kernel_params) <= KP_SIZE,
+"Kernel parameters too large");
+
+#endif
+
 #endif

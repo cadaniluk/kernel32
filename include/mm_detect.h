@@ -22,7 +22,6 @@
 
 struct __attribute__ ((packed)) e820_entry {
 	uint64_t base;
->>>>>>> Stashed changes
 	uint64_t len;
 	uint32_t type;
 };

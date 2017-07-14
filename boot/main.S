@@ -2,7 +2,6 @@
 #include <mm/seg.h>
 #include <addrs.h>
 #include <crn.h>
-#include <sec_boot_params.h>
 #include <drivers/i8259A.h>
 
 .code16
