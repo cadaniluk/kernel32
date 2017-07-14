@@ -36,11 +36,14 @@
 #define SBP_DRV_NUM SBP_BASE
 #define SBP_CURR_LINE (SBP_BASE + 0x1)
 
-#define KP_E820_MAP KP_BASE
+#define KP_E820_MAP_LEN KP_BASE
+#define KP_E820_MAP (KP_BASE + 0x4)
 
 #elif defined(__C__)
 
-static struct {
+#include <basetypes.h>
+
+static struct __attribute__ ((packed)) {
 	uint8_t drv_num;
 	uint8_t curr_line;
 } * const sec_boot_params = (void *) SBP_BASE;
@@ -51,7 +54,8 @@ _Static_assert(sizeof(*sec_boot_params) <= SBP_SIZE,
 "Secondary bootloader parameters too large");
 
 
-static struct {
+static struct __attribute__ ((packed)) {
+	uint32_t e820_map_len;
 	struct e820_entry e820_map[E820_MAX_ENTRIES];
 } * const kernel_params = (void *) KP_BASE;
 
