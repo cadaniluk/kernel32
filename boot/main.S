@@ -58,7 +58,7 @@ bootsys_start:
 
 	/* Detect memory. */
 	VGA_PRINT($mm_detect_msg, $DEF_ATTR)
-	call mm_detect_e820
+	call init_e820_map
 	test %ax, %ax
 	jz mm_detect_fail
 	VGA_PRINT($mm_detect_succ_msg, $OK_ATTR)

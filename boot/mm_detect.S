@@ -11,7 +11,7 @@
  * that; Linux has.
  */
 
-.global mm_detect_e820
+.global init_e820_map
 
 .data
 /* TODO: allocate on heap or similar! */
@@ -22,7 +22,7 @@ entry_dest: .int KP_E820_MAP
 /*
  * Returns the number of entries in `%ax'.
  */
-mm_detect_e820:
+init_e820_map:
 	xor %ebx, %ebx
 	mov $E820_SMAP, %edx
 
