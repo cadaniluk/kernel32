@@ -11,7 +11,7 @@ CFLAGS += -c -nostdlib -nodefaultlibs -ffreestanding -no-integrated-cpp -m32 \
 -Wall -Wextra -pedantic -std=c11 -x c -march=i386 -O3
 # TODO: when you can be absolutely sure a certain cpu is used (through
 # configuration for example) you may replace march=i386 with some other value
-CPPFLAGS += -P -w -I $(ROOT)/include/ -I $(M4DIR)
+CPPFLAGS += -nostdinc -P -w -I $(ROOT)/include/ -I $(M4DIR)
 
 %.o: %.c
 	$(CPP) $(CPPFLAGS) $< -D__C__ | $(M4) $(M4FILES) - | $(CC) $(CFLAGS) -o $@ -
