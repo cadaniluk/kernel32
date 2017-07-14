@@ -63,7 +63,7 @@ mm_detect_e820:
 	mov %edi, entry_dest
 
 	dec %ebp
-	jz 1b
+	jnz 1b
 
 success:
 	mov $E820_MAX_ENTRIES, %ax
