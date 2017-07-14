@@ -49,10 +49,6 @@ image.img: boot.img kernel.img
 	count=$(shell printf "%d" $$((KERNEL_SECTORS))) \
 	seek=$(shell printf "%d" $$((BOOTSYS_SECTORS + 1))) conv=notrunc
 
-boot.img: boot.out
-
-kernel.img: kernel.out
-
 clean:
 	make -C boot clean
 	make -C kernel clean
