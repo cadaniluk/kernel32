@@ -1,6 +1,7 @@
-*.o # object files
-*.gch # precompiled headers
-*.sym # debug symbol files
-*.out # temporary executables
-*.img # binary images
-bochsout.txt # bochs log file
+*.o
+*.gch
+*.sym
+*.out
+*.img
+*.pp
+bochsout.txt
