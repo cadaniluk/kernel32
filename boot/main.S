@@ -61,7 +61,8 @@ bootsys_start:
 	call init_e820_map
 	test %ax, %ax
 	jz mm_detect_fail
-	movzx %ax, KP_E820_MAP_LEN
+	movzx %ax, %eax
+	mov %eax, KP_E820_MAP_LEN
 	VGA_PRINT($mm_detect_succ_msg, $OK_ATTR)
 
 	/* Load the kernel. */
