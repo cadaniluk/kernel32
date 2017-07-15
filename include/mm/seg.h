@@ -17,8 +17,8 @@
 
 typedef uint64_t descr_t;
 
-extern descr_t gdt[] __attribute__((aligned(8)));
-extern descr_t idt[] __attribute__((aligned(8)));
+extern descr_t gdt[] __attribute__((aligned(DESCR_SIZE)));
+extern descr_t idt[] __attribute__((aligned(DESCR_SIZE)));
 
 /*
  * Initialize the IDT at runtime, not at compile time as is the case with the
