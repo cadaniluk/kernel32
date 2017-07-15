@@ -44,5 +44,7 @@ kernel_start:
 	lidt idtr
 	call idt_init
 
+	call mm_init
+
 	cli
 	hlt

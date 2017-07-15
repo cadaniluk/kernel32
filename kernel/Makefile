@@ -23,7 +23,7 @@ CPPFLAGS += -nostdinc -P -w -I $(ROOT)/include/ -I $(M4DIR)
 %.ld.pp: %.ld
 	$(CPP) $(CPPFLAGS) -x c $< | $(M4) $(M4FILES) - > $@
 
-kernel_objs = entry.o cpuid.o drivers/vga.o descr.o events/faults.o \
+kernel_objs = entry.o mm.o cpuid.o drivers/vga.o descr.o events/faults.o \
 events/traps.o events/aborts.o events/interrupts.o
 
 all: $(ROOT)/kernel.out
