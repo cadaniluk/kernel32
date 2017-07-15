@@ -74,10 +74,10 @@ __asm__(
 	"irq11, irq12, irq13, irq14, irq15"
 );
 
-define(`ADDR_COUNT1', `2')
-define(`ADDR_COUNT2', `12')
-define(`ADDR_COUNT3', `5')
-define(`ADDR_COUNT4', `16')
+#define ADDR_COUNT1 2
+#define ADDR_COUNT2 12
+#define ADDR_COUNT3 5
+#define ADDR_COUNT4 16
 
 /*
  * A dummy ISR for all user-defined interrupts that do not have their own
