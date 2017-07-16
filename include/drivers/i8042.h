@@ -343,7 +343,7 @@
 
 #ifdef __C__
 
-#include <basetypes.h>
+#include <stdint.h>
 
 void i8042_set_cmd_byte(uint8_t b);
 uint8_t i8042_cmd_byte(void);

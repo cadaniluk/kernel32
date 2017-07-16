@@ -18,7 +18,7 @@
 
 #ifdef __C__
 
-#include <basetypes.h>
+#include <stdint.h>
 
 struct __attribute__ ((packed)) e820_entry {
 	uint64_t base;

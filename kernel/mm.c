@@ -1,6 +1,7 @@
 #include <mm/paging.h>
 #include <cpuid.h>
 #include <crn.h>
+#include <stddef.h>
 
 pde_t pg_dir[PD_LEN];
 

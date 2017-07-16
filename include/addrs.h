@@ -41,7 +41,7 @@
 
 #elif defined(__C__)
 
-#include <basetypes.h>
+#include <stdint.h>
 
 static struct __attribute__ ((packed)) {
 	uint8_t drv_num;

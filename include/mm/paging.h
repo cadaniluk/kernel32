@@ -106,7 +106,7 @@
 
 #ifdef __C__
 
-#include <basetypes.h>
+#include <stdint.h>
 
 /*
  * We're going to start slowly: 32-bit paging, no PAE or PSE. Future patches

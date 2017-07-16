@@ -1,7 +1,7 @@
 #ifndef __CPUID_H
 #define __CPUID_H
 
-#include <basetypes.h>
+#include <stdint.h>
 
 struct __attribute__ ((packed)) cpu_info {
 	uint32_t eax;

@@ -1,7 +1,7 @@
 #ifndef MALLOC_H
 #define MALLOC_H
 
-#include <basetypes.h>
+#include <stddef.h>
 
 /*
  * Allocates a certain number of pages and returns a pointer to that contiguous
