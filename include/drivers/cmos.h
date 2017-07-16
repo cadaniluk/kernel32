@@ -330,7 +330,7 @@
 
 /*
  * Primary display is attached to the Color/Graphics Monitor Adapter in the
- * 80-column mode.
+ * 40-column mode.
  */
 #define CMOS_COLOR_C40 0x10
 
@@ -430,5 +430,21 @@
  * utility.
  */
 #define CMOS_INITMSG 0x40
+
+#ifdef __C__
+
+#include <io.h>
+
+static inline uint8_t get_cmos(uint8_t i)
+{
+	outb(i, CMOS_REGSEL);
+	return inb(CMOS_REGDATA);
+}
+
+void set_cmos(uint8_t i, uint8_t data)
+{
+	outb(i, CMOS_REGSEL);
+	outb(data, CMOS_REGDATA);
+}
 
 #endif /* CMOS_H */
