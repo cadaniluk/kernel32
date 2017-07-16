@@ -20,7 +20,7 @@ typedef __typeof__(sizeof(int)) size_t;
 /* TODO: __typeof__ is very nice but a GNU extension. should we stay strictly
  * conforming instead? */
 
-typedef __typeof__(NULL - NULL) ptrdiff_t;
+typedef __typeof__((char *) 0x0 - (char *) 0x0) ptrdiff_t;
 
 typedef int wchar_t;	/* TODO: fix that, its not correct */
 
