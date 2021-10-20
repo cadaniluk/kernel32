@@ -447,4 +447,5 @@ void set_cmos(uint8_t i, uint8_t data)
 	outb(data, CMOS_REGDATA);
 }
 
+#endif /* __C__ */
 #endif /* CMOS_H */
